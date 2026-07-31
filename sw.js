@@ -36,30 +36,16 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+	if (e.request.method !== 'GET') return;
+
 	e.respondWith(
 		fetch(e.request).then((networkResponse) => {
 			return caches.open(CACHE_DYNAMIC_NAME)
 				.then((cache) => {
-					/**
-					 * .put()
-					 * El método put pertenece al objeto Cache y se utiliza para almacenar una respuesta en la caché.
-					 * Toma dos argumentos:
-					 * Request: La solicitud que se está almacenando.
-					 * Response: La respuesta que se está almacenando.
-					 * @param {Request} request
-					 * @param {Response} response
-					 */
-					/**
-					 * .clone()
-					 * El método clone pertenece al objeto Response y se utiliza para crear una copia de la respuesta.
-					 * Esto es necesario porque las respuestas son "streams" (en español streams se puede entender como flujos) y solo se pueden consumir una vez.
-					 * Al clonar la respuesta, puedes usar una copia para almacenar en la caché y otra para devolver al navegador.
-					 */
 					cache.put(e.request, networkResponse.clone());
 					return networkResponse;
 				})
-		}).catch((error) => {
-			// console.log("Sin conexion, recuperando cache...");
+		}).catch(() => {
 			return caches.match(e.request);
 		})
 	);

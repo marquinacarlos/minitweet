@@ -33,13 +33,13 @@ onMounted(async () => {
 </script>
 
 <template>
-	<div class="mx-auto max-w-96 grid grid-rows-[1fr] h-[calc(100dvh-65px)] text-slate-200 px-2 text-sm">
-		<main class="flex-1 w-full">
+	<div class="mx-auto max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg grid grid-rows-[1fr] h-[calc(100dvh-var(--navbar-height))] text-slate-200 px-2 text-sm">
+		<main class="flex-1 w-full max-w-xl mx-auto flex flex-col">
 			<RouterView />
 		</main>
 	</div>
 	<div class="fixed bottom-0 left-0 right-0 w-full">
-		<ContainerComp id="barTop" class="relative mx-auto w-full max-w-96"></ContainerComp>
+		<ContainerComp id="barTop" class="relative mx-auto w-full max-w-xl"></ContainerComp>
 		<NavBar />
 	</div>
 </template>

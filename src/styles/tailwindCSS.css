@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+        --navbar-height: 65px;
+}
+
 body {
         background-color: #000;
         scrollbar-width: thin;
@@ -12,7 +16,7 @@ body {
         width: 6px;
 }
 ::-webkit-scrollbar:hover {
-        width: 60px;
+        width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -48,6 +52,14 @@ body {
         @apply w-full p-2 text-white bg-transparent border-b focus:outline-none focus:border-blue-600 bg-zinc-400 bg-opacity-10 rounded-t
 }
 
+.btn-primary {
+        @apply transition w-full py-2 bg-white text-black rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent
+}
+
+.btn-secondary {
+        @apply transition w-full py-2 bg-transparent text-white rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent
+}
+
 /* Estos formateos son para que, cuando el navegador de sugerencias de autocompletado, no cambie el color de fondo de los inputs */
 input:-webkit-autofill {
         -webkit-box-shadow: 0 0 0 30px #111112 inset !important; /* Cambia el color de fondo */
@@ -65,21 +77,6 @@ input:-moz-autofill {
 input:-ms-autofill {
         box-shadow: 0 0 0 30px #111112 inset !important; /* Cambia el color de fondo */
         -ms-text-fill-color: #ffffff !important; /* Cambia el color del texto */
-}
-
-.z-index-10{
-        z-index: 10;
-}
-
-.z-index-20{
-        z-index: 20;
-}
-.z-index-1000{
-        z-index: 1000;
-}
-
-.fullHeight {
-        height: calc(var(--vh, 1vh) * 100);
 }
 
 #btnInstall {

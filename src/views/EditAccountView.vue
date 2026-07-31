@@ -92,7 +92,7 @@ async function handlerSubmit() {
 							class="w-full p-2 bg-transparent border-b focus:outline-none focus:border-blue-600 custom-input opacity-30 cursor-not-allowed">
 					</ContainerComp>
 
-					<!-- TODO: Agregar aquí tambien las funcion de cambio de foto de perfil -->
+					<!-- TODO: Add profile photo change function here -->
 
 					<ContainerComp>
 						<label for="bio" class="sr-only">Biografía</label>

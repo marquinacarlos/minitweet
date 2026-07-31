@@ -43,7 +43,7 @@ function handlerLogoutUser() {
 }
 
 /**
- * Guarda la foto de perfil
+ * Save profile photo
  */
 async function saveProfilePhoto() {
 	if (isOwnAccount.value && selectedFile.value && tempProfilePhotoPreview.value !== userProfile.value?.photoURL && tempProfilePhotoPreview.value !== DEFAULT_PROFILE_PHOTO) {
@@ -57,7 +57,7 @@ async function saveProfilePhoto() {
 }
 
 /**
- * Cancela la subida de la foto de perfil
+ * Cancel profile photo upload
  */
 function cancelProfilePhotoUpload() {
 	tempProfilePhotoPreview.value = userProfile.value?.photoURL || DEFAULT_PROFILE_PHOTO;
@@ -66,7 +66,7 @@ function cancelProfilePhotoUpload() {
 }
 
 /**
- * Función para cargar la foto de perfil
+ * Handle profile photo upload
  * @param {Event} e
  */
 function handleProfilePhotoUpload(e) {
@@ -83,7 +83,7 @@ function handleProfilePhotoUpload(e) {
 }
 
 /**
- * Guarda la foto de portada
+ * Save cover photo
  */
 async function saveCoverPhoto() {
 	if (isOwnAccount.value && selectedFile.value && tempCoverPhotoPreview.value !== userProfile.value?.coverPhotoURL && tempCoverPhotoPreview.value !== DEFAULT_COVER_PHOTO) {
@@ -97,7 +97,7 @@ async function saveCoverPhoto() {
 }
 
 /**
- * Cancela la subida de la foto de portada
+ * Cancel cover photo upload
  */
 function cancelCoverPhotoUpload() {
 	tempCoverPhotoPreview.value = userProfile.value?.coverPhotoURL || DEFAULT_COVER_PHOTO;
@@ -106,7 +106,7 @@ function cancelCoverPhotoUpload() {
 }
 
 /**
- * Función para cargar la foto de portada
+ * Handle cover photo upload
  * @param {Event} e
  */
 function handleCoverPhotoUpload(e) {
@@ -123,7 +123,7 @@ function handleCoverPhotoUpload(e) {
 }
 
 /**
- * Abre el modal con el contenido seleccionado
+ * Open modal with selected content
  * @param {String} content
  */
 function handlerContentModal(content = null) {
@@ -132,8 +132,7 @@ function handlerContentModal(content = null) {
 }
 
 /**
- * Función chequear si hay un usuario autenticado.
- * Tambien resuelve y asigna el perfil del usuario.
+ * Check if user is authenticated and load profile
  * @param {String} uid
  */
  async function checkUserProfile(uid) {

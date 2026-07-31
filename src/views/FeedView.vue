@@ -128,17 +128,17 @@ onBeforeUnmount(() => {
 			<form @submit.prevent="handlerSubmit()"
 				action="#" 
 				class="flex flex-col gap-4">
-				<label for="title" class="sr-only">Título</label>
+				<label for="title" class="sr-only">Title</label>
 				<input v-model="newPost.title" 
 					type="text" 
 					placeholder="Title" 
 					class="custom-input">
-				<label for="body" class="sr-only">Contenido</label>
+				<label for="body" class="sr-only">Content</label>
 				<textarea v-model="newPost.body" 
 					placeholder="Content" 
 					required 
 					class="custom-input resize-none"></textarea>
-				<label for="photo-upload" class="sr-only">Subir nueva foto</label>
+				<label for="photo-upload" class="sr-only">Upload photo</label>
 				<input @change="handlerFileToPost"
 					type="file" 
 					id="photo-upload"  

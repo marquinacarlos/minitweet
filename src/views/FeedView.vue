@@ -120,7 +120,6 @@ onBeforeUnmount(() => {
 				<label for="body" class="sr-only">Content</label>
 				<textarea v-model="newPost.body"
 					placeholder="Content"
-					required
 					class="custom-input resize-none"></textarea>
 				<label for="photo-upload" class="sr-only">Upload photo</label>
 				<input @change="handlerFileToPost"
@@ -129,7 +128,9 @@ onBeforeUnmount(() => {
 					accept="image/*"
 					class="w-full file:w-full file:transition-all file:cursor-pointer file:mr-4 file:py-2 file:rounded-lg file:border file:border-white file:text-sm file:font-semibold file:bg-violet-50 file:text-black hover:file:bg-black hover:file:text-white">
 				<ContainerComp class="flex flex-col gap-2">
-					<button type="submit" class="btn-primary text-sm">Publish</button>
+					<button type="submit"
+						:disabled="!newPost.title.trim() && !newPost.body.trim() && !newPost.file"
+						class="btn-primary text-sm disabled:cursor-not-allowed disabled:bg-gray-900 disabled:hover:border-transparent disabled:text-gray-600">Publish</button>
 					<button @click="cancelNewPost" type="button" class="btn-secondary text-sm">Cancel</button>
 				</ContainerComp>
 			</form>

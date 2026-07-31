@@ -255,7 +255,6 @@ onBeforeUnmount(() => {
 						id="body"
 						name="body"
 						placeholder="Write your post"
-						required
 						class="custom-input">
 				</ContainerComp>
 
@@ -282,7 +281,7 @@ onBeforeUnmount(() => {
 
 				<ContainerComp class="flex flex-col gap-2">
 					<button type="submit"
-						:disabled="!updatePostData.title && !updatePostData.body"
+						:disabled="!updatePostData.title?.trim() && !updatePostData.body?.trim() && !updatePostData.file && !post?.file"
 						class="btn-primary text-sm disabled:cursor-not-allowed disabled:bg-gray-900 disabled:hover:border-transparent disabled:text-gray-600">
 						Update post
 					</button>

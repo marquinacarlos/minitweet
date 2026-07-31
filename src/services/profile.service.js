@@ -21,12 +21,9 @@ export async function createProfileUser(newUserProfile) {
  * @returns Object<{userProfile}>
  */
 export async function getProfileUserByUID(uid) {
-	try {
-		const userDoc = await getDoc(doc(db, 'usersProfiles', uid));
-		if (userDoc.exists()) return userDoc.data();
-	} catch (error) {
-		console.error("Error getting user by UID: ", error.message);
-	}
+	const userDoc = await getDoc(doc(db, 'usersProfiles', uid));
+	if (!userDoc.exists()) throw new Error(`User profile not found for UID: ${uid}`);
+	return userDoc.data();
 }
 
 /**

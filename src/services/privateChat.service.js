@@ -66,6 +66,18 @@ export async function savePrivateMessage(senderID, receiverID, message) {
  * @param {Function} callback Función de callback para manejar los mensajes
  * @returns {Function} Función para cancelar la suscripción al listener
  */
+export function getUserChats(userUID, callback) {
+	const q = query(privateChatCollectionRef, where(`users.${userUID}`, '==', true));
+	const unsubscribe = onSnapshot(q, (snapshot) => {
+		const chats = snapshot.docs.map((doc) => ({
+			id: doc.id,
+			...doc.data()
+		}));
+		callback(chats);
+	});
+	return unsubscribe;
+}
+
 export function getPrivateMessages(senderID, receiverID, callback) {
 	let unsubscribe = null;
 

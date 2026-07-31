@@ -1,7 +1,7 @@
 //------------------------------------------------------------------- FIREBASE CONFIG
 import { db } from '@/services/firebase.service';
 //------------------------------------------------------------------- FIREBASE SERVICES
-import { addDoc, collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, deleteDoc, getDoc, getDocs, onSnapshot, orderBy, query, serverTimestamp, updateDoc, where } from "firebase/firestore";
 //------------------------------------------------------------------- VARIABLES GLOBALES
 const postsCollection = collection(db, 'posts');
 //------------------------------------------------------------------- FUNCIONES
@@ -76,7 +76,7 @@ export async function getPostByIdFromFirestore(postId, callback) {
 		});
 		return unsubscribe;
 	} else {
-		console.error("No such document!");
+		throw new Error(`Post with ID "${postId}" not found`);
 	}
 }
 
@@ -86,6 +86,10 @@ export async function getPostByIdFromFirestore(postId, callback) {
  * @param {Object} data 
  * @returns 
  */
+export async function deletePostFromFirestore(postID) {
+	await deleteDoc(doc(postsCollection, postID));
+}
+
 export async function updatePostOnFirestore(postID, data, callback) {
 	try {
 		data.updatedAt = serverTimestamp();

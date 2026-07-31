@@ -28,6 +28,11 @@ export const getFileURL = async (file) => {
  * @returns 
  */
 export const deleteFile = async (path) => {
-	const storageRef = ref(storage, path); // Referencia al archivo en el storage
-	return await deleteObject(storageRef); // Borrar el archivo
+	const storageRef = ref(storage, path);
+	return await deleteObject(storageRef);
+}
+
+export const deleteFileByURL = async (url) => {
+	const storageRef = ref(storage, url);
+	return await deleteObject(storageRef);
 }

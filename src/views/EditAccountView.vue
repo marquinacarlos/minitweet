@@ -1,6 +1,7 @@
 <script setup>
 //------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@composables/useAuth';
+import useProfile from '@/composables/useProfile';
 //------------------------------------------------------------------- COMPONENTS
 import ContainerComp from '@/components/ContainerComp.vue';
 import TitleComp from '@/components/TitleComp.vue';
@@ -11,7 +12,8 @@ import { useRouter } from 'vue-router';
 
 //------------------------------------------------------------------- USE COMPOSABLES
 const router = useRouter();
-const { user, updateUser } = useAuth();
+const { user } = useAuth();
+const { updateUser } = useProfile();
 //------------------------------------------------------------------- VARIABLES
 const userLogged = ref({
 	uid: user.value.uid,
@@ -37,11 +39,11 @@ async function handlerSubmit() {
 </script>
 
 <template>
-	<div class=" grid grid-rows-[1fr] h-[calc(100vh-65px)] place-items-center overflow-y-auto">
+	<div class="grid grid-rows-[1fr] h-[calc(100dvh-var(--navbar-height))] place-items-center overflow-y-auto">
 		<ContainerComp class="flex flex-col gap-6">
 			<ContainerComp>
 				<TitleComp text="Editar cuenta" :stickyTop="true" />
-				<ContainerComp :text="`#${userLogged.uid}`" class="text-xs text-center font-bold text-gray-300 text-opacity-40 mt-2" />
+				<ContainerComp class="text-xs text-center font-bold text-gray-300 text-opacity-40 mt-2">#{{ userLogged.uid }}</ContainerComp>
 			</ContainerComp>
 			<ContainerComp @submit.prevent="handlerSubmit" tag="form" class="flex-1" action="#">
 				<ContainerComp class="flex flex-col gap-4 items-center">
@@ -105,12 +107,8 @@ async function handlerSubmit() {
 					</ContainerComp>
 
 					<ContainerComp class="flex flex-col gap-2">
-						<button type="submit" class="transition w-full py-2 bg-white text-black rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent">
-							Guardar cambios
-						</button>
-						<button type="button" @click="router.back()" class="transition w-full py-2 bg-black text-white rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent">
-							Cancelar
-						</button>
+						<button type="submit" class="btn-primary">Guardar cambios</button>
+						<button type="button" @click="router.back()" class="btn-secondary">Cancelar</button>
 					</ContainerComp>
 				</ContainerComp>
 			</ContainerComp>

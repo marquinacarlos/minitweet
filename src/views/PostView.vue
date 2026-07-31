@@ -1,6 +1,7 @@
 <script setup>
 //------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@/composables/useAuth';
+import useProfile from '@/composables/useProfile';
 import useModal from '@/composables/useModal';
 import usePosts from '@composables/usePosts.js';
 import useLoading from '@/composables/useLoading';
@@ -11,24 +12,27 @@ import ModalComp from '@/components/ModalComp.vue';
 import ContainerComp from '@/components/ContainerComp.vue';
 import ExpandableText from '@/components/ExpandableText.vue';
 import LoaderComp from '@/components/skeletons/LoaderComp.vue';
-//------------------------------------------------------------------- VUE COMPOSITION API
-import { es } from 'date-fns/locale';
-import { useRoute } from 'vue-router';
-import { formatDistanceToNow } from 'date-fns';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
 import PostItemComp from '@/components/PostItemComp.vue';
+//------------------------------------------------------------------- HELPERS
+import { formatRelativeDate } from '@/utils/date';
+import { DEFAULT_PROFILE_PHOTO } from '@/config/constants';
+import { deleteFileByURL } from '@/services/storage.service';
+//------------------------------------------------------------------- VUE COMPOSITION API
+import { useRoute, useRouter } from 'vue-router';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 //------------------------------------------------------------------- USE COMPOSABLES
 const route = useRoute();
-const { user, getUserById } = useAuth();
-const { getPostByID, updatePost } = usePosts();
+const router = useRouter();
+const { user } = useAuth();
+const { getUserById } = useProfile();
+const { getPostByID, updatePost, deletePost } = usePosts();
 const { modal, closeModal } = useModal(); // TODO: ESTA MODAL ES PARA EDITAR EL POST
 const { loading, startLoading, endLoading } = useLoading();
-const { comments, getCommentsByPostID, saveComment } = useComments();
+const { comments, getCommentsByPostID, saveComment, deleteComment } = useComments();
 //------------------------------------------------------------------- VARIABLES
 const post = ref(null);
 const unsubscribeToPost = ref(null);
 const unsubscribeTocomment = ref(null);
-const ProfilePhotoDefault = '/perfilPhotoDefault.png';
 const newComment = ref({
 	postID: route.params.id,
 	userUID: user.value.uid,
@@ -36,8 +40,11 @@ const newComment = ref({
 });
 const updatePostData = ref({
 	title: '',
-	body: ''
+	body: '',
+	file: null
 });
+const tempEditFilePreview = ref(null);
+const editFileAction = ref(null);
 //------------------------------------------------------------------- METHODS
 /**
  * Guarda un comentario en la base de datos
@@ -55,28 +62,80 @@ async function handlerSubmitComment() {
  * Función para convertir un timestamp a una fecha
  * @param {Object} timestamp
  */
-function convertTimestampToDate(timestamp) {
-	return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-}
-
 /**
  * Actualiza un post en la base de datos
  */
+function handleEditFileChange(e) {
+	const file = e.target.files[0];
+	if (!file) return;
+	updatePostData.value.file = file;
+	editFileAction.value = 'change';
+	const reader = new FileReader();
+	reader.onload = () => { tempEditFilePreview.value = reader.result; };
+	reader.readAsDataURL(file);
+}
+
+function removeEditFile() {
+	updatePostData.value.file = null;
+	tempEditFilePreview.value = null;
+	editFileAction.value = 'remove';
+}
+
 async function handlerSubmitEdit() {
-	unsubscribeTocomment.value = await updatePost(post.value.id, { ...updatePostData.value }, (postUpdated) => {
+	const dataToUpdate = {
+		title: updatePostData.value.title,
+		body: updatePostData.value.body,
+	};
+
+	const oldFileURL = post.value?.file;
+
+	if (editFileAction.value === 'change' && updatePostData.value.file) {
+		if (oldFileURL) await deleteFileByURL(oldFileURL);
+		const { uploadPostFile } = usePosts();
+		dataToUpdate.file = await uploadPostFile(updatePostData.value.file, user.value.uid);
+	} else if (editFileAction.value === 'remove') {
+		if (oldFileURL) await deleteFileByURL(oldFileURL);
+		dataToUpdate.file = '';
+	}
+
+	unsubscribeTocomment.value = await updatePost(post.value.id, dataToUpdate, (postUpdated) => {
 		post.value = postUpdated;
 	});
+	tempEditFilePreview.value = null;
+	editFileAction.value = null;
 	closeModal();
 }
 
 /**
  * Cancela la edición de un post
  */
+async function handleDeleteComment(commentId) {
+	if (!confirm('¿Seguro que deseas eliminar este comentario?')) return;
+	try {
+		await deleteComment(route.params.id, commentId);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+async function handleDeletePost() {
+	if (!confirm('¿Seguro que deseas eliminar esta publicación? Se borrarán todos los comentarios.')) return;
+	try {
+		await deletePost(post.value);
+		router.push({ name: 'Feed' });
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 function cancelEdit() {
 	updatePostData.value = {
 		title: post.value?.title,
-		body: post.value?.body
-	}
+		body: post.value?.body,
+		file: null
+	};
+	tempEditFilePreview.value = null;
+	editFileAction.value = null;
 	closeModal();
 }
 //------------------------------------------------------------------- LIFECYCLE
@@ -90,7 +149,8 @@ onMounted(async () => {
 					if (post.value.userUID === user.value.uid) {
 						updatePostData.value = {
 							title: post.value?.title,
-							body: post.value?.body
+							body: post.value?.body,
+							file: null
 						};
 					}
 				});
@@ -123,7 +183,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<div class="grid grid-rows-[1fr] h-[calc(100vh-104px)] w-full max-w-96">
+	<div class="grid grid-rows-[1fr] h-[calc(100dvh-var(--navbar-height)-40px)] w-full">
 		<template v-if="!loading">
 			<ContainerComp v-if="post" class="flex flex-col overflow-y-scroll">
 				<!-- TÍTULO -->
@@ -131,17 +191,17 @@ onBeforeUnmount(() => {
 				<!-- POST|PUBLICAIÓN -->
 				<PostItemComp :post="post" class="sticky top-14" :editPost="post.userUID === user.uid" />
 				<!-- COMENTARIOS -->
-				<div v-if="comments.length" class="w-full max-w-96 flex">
+				<div v-if="comments.length" class="w-full flex">
 					<ContainerComp tag="ul" class="pb-1 flex flex-col">
 						<!-- COMENTARIO -->
 						<li v-for="comment in comments" :key="comment.id" class="border-b border-gray-800 pb-2 mt-2 bg-gray-900 bg-opacity-35 rounded-lg pl-4 py-2 min-h-[57px] w-full">
 							<!-- USUARIO -->
 							<div class="flex gap-2 items-start">
-								<figure class="min-w-10 max-w-10 min-h-10 rounded-full overflow-hidden">
+								<figure class="w-12 h-12 min-w-12 rounded-full overflow-hidden">
 									<RouterLink :to="{ name: 'Account', params: { id: comment.user.uid } }">
-										<img :src="comment.user.photoURL || ProfilePhotoDefault"
+										<img :src="comment.user.photoURL || DEFAULT_PROFILE_PHOTO"
 											:alt="comment.user.name"
-											class="object-cover rounded-full border-2 border-black cursor-pointer transition hover:border-blue-700">
+											class="w-full h-full object-cover rounded-full border-2 border-black cursor-pointer transition hover:border-blue-700">
 									</RouterLink>
 								</figure>
 								<h2 class="flex-1 break-words whitespace-normal flex gap-1 items-center min-h-6">
@@ -154,11 +214,18 @@ onBeforeUnmount(() => {
 								</h2>
 							</div>
 							<!-- COMENTARIO -->
-							<div class="ml-12 -mt-4 flex flex-col">
+							<div class="ml-14 -mt-4 flex flex-col">
 									<ExpandableText :text="comment.comment" class="text-xs" />
-								<p v-if="comment?.createdAt" class="mt-2 mr-2 text-xs text-gray-500 self-end">
-									{{ formatDistanceToNow(convertTimestampToDate(comment.createdAt), { addSuffix: true, locale: es }) }}
-								</p>
+								<div class="flex justify-between items-center mt-2 mr-2">
+									<button v-if="comment.userUID === user.uid" @click="handleDeleteComment(comment.id)"
+										type="button" class="text-xs text-red-400 hover:text-red-300 transition">
+										Eliminar
+									</button>
+									<span v-else></span>
+									<p v-if="comment?.createdAt" class="text-xs text-gray-500">
+										{{ formatRelativeDate(comment.createdAt) }}
+									</p>
+								</div>
 							</div>
 						</li>
 					</ContainerComp>
@@ -195,35 +262,58 @@ onBeforeUnmount(() => {
 		<ContainerComp @submit.prevent="handlerSubmitEdit" tag="form" class="flex-1 bg-black rounded-lg p-4 max-w-md">
 			<ContainerComp class="flex flex-col gap-4 items-center">
 				<ContainerComp>
-					<label for="title" class="sr-only">Título</label>
-					<input v-model="updatePostData.title" 
-						type="title" 
-						id="title" 
+					<label for="title" class="sr-only">Titulo</label>
+					<input v-model="updatePostData.title"
+						type="text"
+						id="title"
 						name="title"
-						placeholder="Título" 
+						placeholder="Titulo"
 						class="custom-input">
 				</ContainerComp>
 
 				<ContainerComp>
 					<label for="body" class="sr-only">Tweet</label>
-					<input v-model="updatePostData.body" 
-						type="body" 
-						id="body" 
+					<input v-model="updatePostData.body"
+						type="text"
+						id="body"
 						name="body"
-						placeholder="Escribe tu Tweet" 
+						placeholder="Escribe tu Tweet"
 						required
 						class="custom-input">
 				</ContainerComp>
 
-				<ContainerComp>
-					<button type="submit" 
-						:disabled="!updatePostData.title && !updatePostData.body"
-						class="transition w-full py-2 bg-white text-black rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent disabled:cursor-not-allowed disabled:bg-gray-900 disabled:hover:border-transparent disabled:text-gray-600 disabled:hover:bg-none">
-						Actualizar publicación
+				<ContainerComp v-if="tempEditFilePreview || (post?.file && editFileAction !== 'remove')">
+					<figure class="max-w-40 rounded-lg overflow-hidden">
+						<img :src="tempEditFilePreview || post?.file" alt="Imagen del post">
+					</figure>
+					<button type="button" @click="removeEditFile"
+						class="mt-1 text-xs text-red-400 hover:text-red-300">
+						Eliminar imagen
 					</button>
 				</ContainerComp>
+
 				<ContainerComp>
-					<button @click="cancelEdit" type="button" class="transition w-full py-2 bg-black text-white rounded-lg border border-white hover:border-transparent hover:text-black hover:bg-white">
+					<label for="edit-photo-upload" class="block text-sm text-gray-400 mb-1">
+						{{ post?.file ? 'Cambiar imagen' : 'Agregar imagen' }}
+					</label>
+					<input @change="handleEditFileChange"
+						type="file"
+						id="edit-photo-upload"
+						accept="image/*"
+						class="w-full file:w-full file:transition-all file:cursor-pointer file:mr-4 file:py-2 file:rounded-lg file:border file:border-white file:text-sm file:font-semibold file:bg-violet-50 file:text-black hover:file:bg-black hover:file:text-white">
+				</ContainerComp>
+
+				<ContainerComp class="flex flex-col gap-2">
+					<button type="submit"
+						:disabled="!updatePostData.title && !updatePostData.body"
+						class="btn-primary text-sm disabled:cursor-not-allowed disabled:bg-gray-900 disabled:hover:border-transparent disabled:text-gray-600">
+						Actualizar publicacion
+					</button>
+					<button @click="handleDeletePost" type="button"
+						class="w-full py-2 text-sm text-red-400 rounded-lg border border-red-400 transition hover:bg-red-400 hover:text-black">
+						Eliminar publicacion
+					</button>
+					<button @click="cancelEdit" type="button" class="btn-secondary text-sm border border-white">
 						Cancelar
 					</button>
 				</ContainerComp>

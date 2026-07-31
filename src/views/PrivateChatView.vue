@@ -3,6 +3,7 @@
 import { getPrivateMessages, savePrivateMessage } from '@/services/privateChat.service';
 //------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@/composables/useAuth.js';
+import useProfile from '@/composables/useProfile';
 import useLoading from '@/composables/useLoading';
 //------------------------------------------------------------------- COMPONENTS
 import ContainerComp from '@/components/ContainerComp.vue';
@@ -14,7 +15,8 @@ import { onMounted, ref, nextTick, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 //------------------------------------------------------------------- USE COMPOSABLES
 const route = useRoute();
-const { user, getUserById } = useAuth();
+const { user } = useAuth();
+const { getUserById } = useProfile();
 const { loading, startLoading, endLoading } = useLoading();
 //------------------------------------------------------------------- DATA
 const userToChat = ref(null);
@@ -32,7 +34,7 @@ async function sendMessage() {
 		newMessage.value = '';
 		scrollToBottom();
 	} catch (error) {
-		console.log(error.message);
+		console.error(error.message);
 	}
 }
 
@@ -77,7 +79,7 @@ onBeforeUnmount(() => {
 	<div class="grid grid-rows-[auto_1fr] custom-height">
 		<h1 class="sr-only">Private chat</h1>
 		<!-- HEADER -->
-		<ContainerComp class="max-w-96 p-4 bg-black flex items-center gap-4 shadow">
+		<ContainerComp class="p-4 bg-black flex items-center gap-4 shadow">
 			<ProfilePhotoComp :src="userToChat?.photoURL" :alt="userToChat?.name" width="w-12" height="h-12" />
 			<h1 class="text-xl">{{ userToChat?.name }} <span class="text-xs text-gray-400">(Private Chat)</span></h1>
 		</ContainerComp>
@@ -111,7 +113,7 @@ onBeforeUnmount(() => {
 
 	<!-- INPUT -->
 	<Teleport to="#barTop" v-if="!loading">
-		<ContainerComp class="max-w-96 flex gap-1">
+		<ContainerComp class="flex gap-1">
 			<div class="space-y-2 w-full">
 				<form @submit.prevent="sendMessage" class="flex rounded-lg shadow-sm shadow-black/[.04] absolute bottom-1 w-full px-2">
 					<label for="message" class="sr-only">Mensaje</label>
@@ -132,7 +134,7 @@ onBeforeUnmount(() => {
 <style scoped>
 /* dvh -> Dinamic viewport height */
 .custom-height {
-	height: calc(100dvh - 105px);
+	height: calc(100dvh - var(--navbar-height) - 40px);
 }
 
 .message-bubble {

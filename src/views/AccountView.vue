@@ -1,6 +1,7 @@
 <script setup>
 //------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@/composables/useAuth';
+import useProfile from '@/composables/useProfile';
 import useLoading from '@/composables/useLoading';
 import useModal from '@/composables/useModal';
 import usePosts from '@/composables/usePosts';
@@ -12,6 +13,7 @@ import CoverPhotoComp from '@/components/CoverPhotoComp.vue';
 import ProfilePhotoComp from '@/components/ProfilePhotoComp.vue';
 import Modal from '@components/ModalComp.vue';
 import PostListComp from '@/components/PostListComp.vue';
+import { DEFAULT_PROFILE_PHOTO, DEFAULT_COVER_PHOTO } from '@/config/constants';
 //------------------------------------------------------------------- VUE COMPOSITION API
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 //------------------------------------------------------------------- VUE ROUTER
@@ -22,16 +24,15 @@ const router = useRouter();
 const { getAllPostsByUserUID } = usePosts();
 const { openModal, closeModal } = useModal();
 const { loading, startLoading, endLoading } = useLoading();
-const { user, getUserById, logout, updateProfilePhoto, updateCoverPhoto } = useAuth();
+const { user, logout } = useAuth();
+const { getUserById, updateProfilePhoto, updateCoverPhoto } = useProfile();
 //------------------------------------------------------------------- VARIABLES
 const userProfile = ref(null);
 const isOwnAccount = ref(false);
 const modalContent = ref(null);
 const tempProfilePhotoPreview = ref(null);
 const tempCoverPhotoPreview = ref(null);
-let selectedFile = ref(null);
-const defaultPerfilPhoto = '/perfilPhotoDefault.png';
-const defaultCoverPhoto = 'https://placehold.co/1600x900';
+const selectedFile = ref(null);
 const postFromUser = ref([]);
 //------------------------------------------------------------------- METHODS
 /**
@@ -45,7 +46,7 @@ function handlerLogoutUser() {
  * Guarda la foto de perfil
  */
 async function saveProfilePhoto() {
-	if (isOwnAccount.value && selectedFile.value && tempProfilePhotoPreview.value !== userProfile.value?.photoURL && tempProfilePhotoPreview.value !== defaultPerfilPhoto) {
+	if (isOwnAccount.value && selectedFile.value && tempProfilePhotoPreview.value !== userProfile.value?.photoURL && tempProfilePhotoPreview.value !== DEFAULT_PROFILE_PHOTO) {
 		const userConfirmed = confirm("¿Estás seguro de que deseas cambiar la imagen?");
 		if (userConfirmed) {
 			await updateProfilePhoto(selectedFile.value);
@@ -59,7 +60,7 @@ async function saveProfilePhoto() {
  * Cancela la subida de la foto de perfil
  */
 function cancelProfilePhotoUpload() {
-	tempProfilePhotoPreview.value = userProfile.value?.photoURL || defaultPerfilPhoto;
+	tempProfilePhotoPreview.value = userProfile.value?.photoURL || DEFAULT_PROFILE_PHOTO;
 	selectedFile.value = null;
 	closeModal();
 }
@@ -70,7 +71,7 @@ function cancelProfilePhotoUpload() {
  */
 function handleProfilePhotoUpload(e) {
 	if (isOwnAccount.value) {
-		tempProfilePhotoPreview.value = userProfile.value?.photoURL || defaultPerfilPhoto;
+		tempProfilePhotoPreview.value = userProfile.value?.photoURL || DEFAULT_PROFILE_PHOTO;
 		const file = e.target.files[0];
 		selectedFile.value = file;
 		const reader = new FileReader();
@@ -85,7 +86,7 @@ function handleProfilePhotoUpload(e) {
  * Guarda la foto de portada
  */
 async function saveCoverPhoto() {
-	if (isOwnAccount.value && selectedFile.value && tempCoverPhotoPreview.value !== userProfile.value?.coverPhotoURL && tempCoverPhotoPreview.value !== defaultCoverPhoto) {
+	if (isOwnAccount.value && selectedFile.value && tempCoverPhotoPreview.value !== userProfile.value?.coverPhotoURL && tempCoverPhotoPreview.value !== DEFAULT_COVER_PHOTO) {
 		const userConfirmed = confirm("¿Estás seguro de que deseas cambiar la imagen de portada?");
 		if (userConfirmed) {
 			await updateCoverPhoto(selectedFile.value);
@@ -99,7 +100,7 @@ async function saveCoverPhoto() {
  * Cancela la subida de la foto de portada
  */
 function cancelCoverPhotoUpload() {
-	tempCoverPhotoPreview.value = userProfile.value?.coverPhotoURL || defaultCoverPhoto;
+	tempCoverPhotoPreview.value = userProfile.value?.coverPhotoURL || DEFAULT_COVER_PHOTO;
 	selectedFile.value = null;
 	closeModal();
 }
@@ -110,7 +111,7 @@ function cancelCoverPhotoUpload() {
  */
 function handleCoverPhotoUpload(e) {
 	if (isOwnAccount.value) {
-		tempCoverPhotoPreview.value = userProfile.value?.coverPhotoURL || defaultCoverPhoto;
+		tempCoverPhotoPreview.value = userProfile.value?.coverPhotoURL || DEFAULT_COVER_PHOTO;
 		const file = e.target.files[0];
 		selectedFile.value = file;
 		const reader = new FileReader();
@@ -147,7 +148,7 @@ function handlerContentModal(content = null) {
 			}
 		}
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 	} finally {
 		endLoading();
 	}
@@ -168,7 +169,7 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 </script>
 
 <template>
-	<div class="grid grid-rows-[1fr] h-[calc(100vh-64px)] overflow-y-auto">
+	<div class="grid grid-rows-[1fr] h-[calc(100dvh-var(--navbar-height))] overflow-y-auto">
 		<template v-if="!loading">
 			<ContainerComp class="flex-1 flex flex-col">
 				<ContainerComp class="flex-1 flex flex-col gap-4">
@@ -176,11 +177,11 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 					<ContainerComp class="flex flex-col">
 						<CoverPhotoComp :src="userProfile?.coverPhotoURL"
 							:alt="userProfile?.name" :isOwnAccount="isOwnAccount"
-							:onClick="() => handlerContentModal('coverPhoto')" />
-						<ContainerComp class="max-w-96 flex justify-between items-end -mt-10 xs:-mt-8">
+							@click="handlerContentModal('coverPhoto')" />
+						<ContainerComp class="flex justify-between items-end -mt-10 xs:-mt-8">
 							<ProfilePhotoComp :src="userProfile?.photoURL"
 								:alt="userProfile?.name" :isOwnAccount="isOwnAccount"
-								:onClick="() => handlerContentModal('profilePhoto')" />
+								@click="handlerContentModal('profilePhoto')" />
 							<div class="flex gap-2">
 								<template v-if="isOwnAccount">
 									<RouterLink to="/account/edit" class="inline-flex items-center px-2 py-1 xs:px-4 xs:py-2 border rounded-lg text-center text-xs xs:text-base transition hover:bg-white hover:text-black">
@@ -199,24 +200,24 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 						</ContainerComp>
 					</ContainerComp>
 
-					<ContainerComp class="max-w-96 flex flex-col gap-2 justify-center items-center">
+					<ContainerComp class="flex flex-col gap-2 justify-center items-center">
 						<ContainerComp>
 							<ContainerComp class="flex flex-col items-center">
-								<ContainerComp tag="p" :text="`#${userProfile?.uid}`" class="text-gray-500 text-opacity-80 text-xs" />
+								<p class="text-gray-500 text-opacity-80 text-xs">#{{ userProfile?.uid }}</p>
 								<ContainerComp class="flex">
 									<ContainerComp tag="h2" class="font-bold text-base">
 										{{ userProfile?.name }} <span class="font-normal text-gray-600 text-sm">@{{ userProfile?.username }}</span>
 									</ContainerComp>
 								</ContainerComp>
 							</ContainerComp>
-							<ContainerComp tag="p"  :text="`Mail: ${userProfile?.email}`" class="text-gray-600" />
-							<ContainerComp class="flex">
-								<ContainerComp tag="p" :text="`Seguidores: ${userProfile?.followers?.length}`" class="text-gray-200" />
-								<ContainerComp tag="p" :text="`Siguiendo: ${userProfile?.following?.length}`" class="text-gray-200" />
+							<p class="text-gray-600">Mail: {{ userProfile?.email }}</p>
+							<ContainerComp class="flex gap-4">
+								<p class="text-gray-200">Seguidores: {{ userProfile?.followers?.length }}</p>
+								<p class="text-gray-200">Siguiendo: {{ userProfile?.following?.length }}</p>
 							</ContainerComp>
 						</ContainerComp>
-						<ContainerComp tag="p" :text="userProfile?.bio" class="break-words whitespace-normal" />
-						<ContainerComp tag="h3" text="Publicaciones" class="sticky top-12 bg-black z-10 break-words whitespace-normal w-full border-b border-gray-200 py-1 max-w-96 mb-4" />
+						<p class="break-words whitespace-normal">{{ userProfile?.bio }}</p>
+						<ContainerComp tag="h3" text="Publicaciones" class="sticky top-12 bg-black z-10 break-words whitespace-normal w-full border-b border-gray-200 py-1 mb-4" />
 						<PostListComp :posts="postFromUser" />
 					</ContainerComp>
 				</ContainerComp>
@@ -232,7 +233,7 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 		<template v-if="modalContent === 'coverPhoto'">
 			<ContainerComp class="max-w-96 px-2">
 				<ContainerComp tag="figure" class="max-w-96 aspect-w-16 aspect-h-9">
-					<img :src="tempCoverPhotoPreview || (userProfile?.coverPhotoURL || defaultCoverPhoto)"
+					<img :src="tempCoverPhotoPreview || (userProfile?.coverPhotoURL || DEFAULT_COVER_PHOTO)"
 						:alt="userProfile?.name || 'Foto de perfil del usuario'"
 						class="object-cover">
 				</ContainerComp>
@@ -246,9 +247,9 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 					<ContainerComp class="flex flex-col gap-2">
 						<button @click="saveCoverPhoto"
 							type="button" 
-							:disabled="!Boolean(tempCoverPhotoPreview) || tempCoverPhotoPreview === userProfile?.coverPhotoURL || tempCoverPhotoPreview === defaultCoverPhoto"
+							:disabled="!Boolean(tempCoverPhotoPreview) || tempCoverPhotoPreview === userProfile?.coverPhotoURL || tempCoverPhotoPreview === DEFAULT_COVER_PHOTO"
 							class="w-full py-2 rounded-lg text-sm  font-semibold border disabled:border-gray-500 disabled:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
-							:class="{ 'bg-violet-50 text-black hover:text-white hover:bg-black': !!tempCoverPhotoPreview && tempCoverPhotoPreview !== userProfile?.coverPhotoURL && tempCoverPhotoPreview !== defaultCoverPhoto}">
+							:class="{ 'bg-violet-50 text-black hover:text-white hover:bg-black': !!tempCoverPhotoPreview && tempCoverPhotoPreview !== userProfile?.coverPhotoURL && tempCoverPhotoPreview !== DEFAULT_COVER_PHOTO}">
 							Guardar
 						</button>
 						<button @click="cancelCoverPhotoUpload"
@@ -264,7 +265,7 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 		<template v-if="modalContent === 'profilePhoto'">
 			<ContainerComp class="max-w-96 px-2">
 				<ContainerComp tag="figure" class="aspect-w-1 aspect-h-1">
-					<img :src="tempProfilePhotoPreview || (userProfile?.photoURL || defaultPerfilPhoto)"
+					<img :src="tempProfilePhotoPreview || (userProfile?.photoURL || DEFAULT_PROFILE_PHOTO)"
 						:alt="userProfile?.name || 'Foto de perfil del usuario'"
 						class="w-full h-full object-cover">
 				</ContainerComp>
@@ -278,9 +279,9 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 					<ContainerComp class="flex flex-col gap-2">
 						<button @click="saveProfilePhoto"
 							type="button" 
-							:disabled="!Boolean(tempProfilePhotoPreview) || tempProfilePhotoPreview === userProfile?.photoURL || tempProfilePhotoPreview === defaultPerfilPhoto"
+							:disabled="!Boolean(tempProfilePhotoPreview) || tempProfilePhotoPreview === userProfile?.photoURL || tempProfilePhotoPreview === DEFAULT_PROFILE_PHOTO"
 							class="w-full py-2 rounded-lg text-sm  font-semibold border disabled:border-gray-500 disabled:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
-							:class="{ 'bg-violet-50 text-black hover:text-white hover:bg-black': !!tempProfilePhotoPreview && tempProfilePhotoPreview !== userProfile?.photoURL && tempProfilePhotoPreview !== defaultPerfilPhoto, }">
+							:class="{ 'bg-violet-50 text-black hover:text-white hover:bg-black': !!tempProfilePhotoPreview && tempProfilePhotoPreview !== userProfile?.photoURL && tempProfilePhotoPreview !== DEFAULT_PROFILE_PHOTO, }">
 							Guardar
 						</button>
 						<button @click="cancelProfilePhotoUpload"

@@ -18,7 +18,7 @@ const { openModal, closeModal } = useModal();
 const { loading, startLoading, endLoading } = useLoading();
 const { postsList, getAllPosts, createNewPost } = usePosts();
 //------------------------------------------------------------------- VARIABLES
-const defaultImage = 'https://placehold.co/400x400'
+import { DEFAULT_POST_IMAGE } from '@/config/constants';
 const newPost = ref({
 	userUID: user.value?.uid,
 	title: '',
@@ -54,7 +54,7 @@ async function handlerSubmit() {
  */
 function cancelNewPost() {
 	newPost.value = {
-		userID: user.value.uid,
+		userUID: user.value.uid,
 		title: '',
 		body: '',
 		file: ''
@@ -112,7 +112,7 @@ onBeforeUnmount(() => {
 		<ContainerComp class="bg-black rounded-lg p-4 max-w-md">
 			<ContainerComp class="max-w-72 mb-2">
 				<ContainerComp v-if="tempFileToPost" tag="figure" class="max-w-72 rounded-lg overflow-hidden">
-					<img :src="tempFileToPost || defaultImage" :alt="'Foto de perfil del usuario'">
+					<img :src="tempFileToPost || DEFAULT_POST_IMAGE" :alt="'Foto de perfil del usuario'">
 				</ContainerComp>
 			</ContainerComp>
 			<form @submit.prevent="handlerSubmit()"
@@ -135,12 +135,8 @@ onBeforeUnmount(() => {
 					accept="image/*"
 					class="w-full file:w-full file:transition-all file:cursor-pointer file:mr-4 file:py-2 file:rounded-lg file:border file:border-white file:text-sm file:font-semibold file:bg-violet-50 file:text-black hover:file:bg-black hover:file:text-white">
 				<ContainerComp class="flex flex-col gap-2">
-					<button type="submit" class="transition w-full py-2 bg-white text-sm text-black rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent">
-						Publicar
-					</button>
-					<button @click="cancelNewPost" type="button" class="transition w-full py-2 bg-transparent text-sm text-white rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent">
-						Cancelar
-					</button>
+					<button type="submit" class="btn-primary text-sm">Publicar</button>
+					<button @click="cancelNewPost" type="button" class="btn-secondary text-sm">Cancelar</button>
 				</ContainerComp>
 			</form>
 		</ContainerComp>

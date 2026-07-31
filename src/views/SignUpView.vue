@@ -1,6 +1,7 @@
 <script setup>
 //------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@composables/useAuth';
+import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
 //------------------------------------------------------------------- COMPONENTS
 import useLoading from '@/composables/useLoading';
 import TitleComp from '@/components/TitleComp.vue';
@@ -12,7 +13,7 @@ import { ref } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 //------------------------------------------------------------------- USE COMPOSABLES
 const router = useRouter();
-const { registerUser } = useAuth();
+const { registerUser, authError } = useAuth();
 const { loading, startLoading, endLoading } = useLoading();
 //------------------------------------------------------------------- VARIABLES
 const userData = ref({
@@ -21,17 +22,20 @@ const userData = ref({
         email: '',
         password: ''
 })
+const errorMessage = ref(null)
+const showPassword = ref(false)
 //------------------------------------------------------------------- METHODS
 /**
  * Registra un nuevo usuario
  */
 async function handlerSubmit() {
+        errorMessage.value = null;
         try {
                 startLoading();
                 await registerUser({ ...userData.value });
                 router.push({ name: 'Feed' });
         } catch (error) {
-                console.error(error);
+                errorMessage.value = getFirebaseErrorMessage(authError.value);
         } finally {
                 endLoading();
         }
@@ -39,7 +43,7 @@ async function handlerSubmit() {
 </script>
 
 <template>
-        <div class="grid place-items-center grid-rows-[1fr] h-[calc(100vh-65px)]">
+        <div class="grid place-items-center grid-rows-[1fr] h-[calc(100dvh-var(--navbar-height))]">
                 <template v-if="!loading">
                         <ContainerComp class="flex flex-col gap-6 max-w-96">
                         <TitleComp text="Registrarse" />
@@ -78,21 +82,25 @@ async function handlerSubmit() {
                                                         class="custom-input">
                                         </ContainerComp>
 
-                                        <ContainerComp>
+                                        <ContainerComp class="relative">
                                                 <label for="password" class="sr-only">Password</label>
-                                                <input v-model="userData.password" 
-							type="password" 
+                                                <input v-model="userData.password"
+							:type="showPassword ? 'text' : 'password'"
 							id="password"
-                                                        name="password" 
+                                                        name="password"
 							placeholder="Contraseña"
 							required
-                                                        class="custom-input">
+                                                        class="custom-input pr-16">
+						<button type="button" @click="showPassword = !showPassword"
+							class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-white">
+							{{ showPassword ? 'Ocultar' : 'Mostrar' }}
+						</button>
                                         </ContainerComp>
 
+                                        <p v-if="errorMessage" class="text-red-500 text-sm text-center">{{ errorMessage }}</p>
+
                                         <ContainerComp>
-                                                <button type="submit" class="transition w-full py-2 bg-white text-black rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent">
-							Registrarse
-						</button>
+                                                <button type="submit" class="btn-primary">Registrarse</button>
                                         </ContainerComp>
                                 </ContainerComp>
                         </ContainerComp>

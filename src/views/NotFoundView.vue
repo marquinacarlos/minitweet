@@ -1,12 +1,13 @@
 <script setup>
-//------------------------------------------------------------------- COMPONENTS
-import ContainerComp from '@/components/ContainerComp.vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 </script>
 
 <template>
-	<ContainerComp class="flex-1 flex flex-col items-center justify-center">
-		<ContainerComp tag="p" text="📟" class="text-center text-9xl mb-16" />
-		<ContainerComp tag="h1" text="404" class="text-3xl font-bold text-center" />
-		<ContainerComp tag="p" text="La página que buscas no existe." class="text-center" />
-	</ContainerComp>
+	<div class="flex-1 flex flex-col items-center justify-center gap-4">
+		<p class="text-center text-9xl">404</p>
+		<p class="text-center text-gray-400">La pagina que buscas no existe.</p>
+		<button @click="router.back()" class="btn-primary max-w-48">Volver</button>
+	</div>
 </template>

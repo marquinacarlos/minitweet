@@ -1,5 +1,5 @@
 <script setup>
-const defaultAlt = 'Foto de perfil del usuario';
+const defaultAlt = 'User profile photo';
 
 defineProps({
 	isOwnAccount: {

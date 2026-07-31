@@ -18,6 +18,6 @@ defineProps({
 			</li>
 	</ul>
 	<ContainerComp v-else class="text-center text-gray-400 text-opacity-50 my-24">
-		<span>Aún no hay publicaciones...</span>
+		<span>No posts yet...</span>
 	</ContainerComp>
 </template>

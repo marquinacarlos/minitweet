@@ -67,6 +67,10 @@ const props = defineProps({
 					@{{ userFromPost?.username }}
 				</router-link>
 			</h2>
+			<button v-if="editPost" @click="openModal" type="button"
+				class="text-gray-400 text-xs px-2 py-1 transition hover:text-white">
+				Edit
+			</button>
 		</header>
 		<!-- CONTENIDO DE LA PUBLICACIÓN -->
 		<section class="bg-opacity-50 w-full pl-14 pr-2 -mt-5">
@@ -76,19 +80,12 @@ const props = defineProps({
 			<ExpandableText :text="post.body" :linkToPost="post?.id" />
 			<RouterLink v-if="post?.file" :to="{ name: 'Post', params: { id: post?.id } }">
 				<div class="w-full mt-2">
-					<figure class="max-w-40 rounded-lg overflow-hidden">
+					<figure class="max-w-60 rounded-lg overflow-hidden">
 						<img alt="Imagen de la publicación" :src="post?.file">
 					</figure>
 				</div>
 			</RouterLink>
 		</section>
-		<div v-if="editPost" class="my-2 flex justify-center items-center px-6">
-			<button @click="openModal"
-				type="button"
-				class="transition w-60 xs:w-full py-1 bg-white text-sm text-black rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent">
-				Editar
-			</button>
-		</div>
 		<ContainerComp class="flex justify-end pr-4">
 			<p v-if="post?.createdAt" class="text-xs text-gray-500 -mb-3">
 				{{ formatRelativeDate(post.createdAt) }}

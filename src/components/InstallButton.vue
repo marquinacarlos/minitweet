@@ -41,6 +41,6 @@ onMounted(() => {
 
 <template>
 	<button v-if="showBtnInstall" @click="installApp" id="btnInstall">
-		Instalar Minitweet
+		Install Minitweet
 	</button>
 </template>

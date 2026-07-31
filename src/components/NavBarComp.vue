@@ -12,7 +12,7 @@ const { user } = useAuth();
 		<ul class="min-h-16 flex gap-8 justify-center items-center">
 			<li>
 				<RouterLink to="/" class="transition duration-300 ease-in-out transform hover:scale-110 hover:underline">
-					Sobre nosotros
+					About
 				</RouterLink>
 			</li>
 			<template v-if="user">
@@ -22,8 +22,8 @@ const { user } = useAuth();
 					</RouterLink>
 				</li>
 				<li>
-					<RouterLink :to="{ name: 'Account', params: { id: user.uid } }" title="Cuenta" class="transition duration-300 ease-in-out transform hover:scale-110 hover:underline">
-						Perfil
+					<RouterLink :to="{ name: 'Account', params: { id: user.uid } }" title="Profile" class="transition duration-300 ease-in-out transform hover:scale-110 hover:underline">
+						Profile
 					</RouterLink>
 				</li>
 				<li>
@@ -35,7 +35,7 @@ const { user } = useAuth();
 			<template v-else>
 				<li>
 					<RouterLink to="/login" class="transition duration-300 ease-in-out transform hover:scale-110 hover:underline">
-						Iniciar sesión
+						Log in
 					</RouterLink>
 				</li>
 			</template>

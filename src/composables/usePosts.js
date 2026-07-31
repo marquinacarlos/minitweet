@@ -1,38 +1,24 @@
-//------------------------------------------------------------------- FIREBASE SERVICES
 import { getFileURL, uploadFile, deleteFileByURL } from '@/services/storage.service';
 import { getAllPostFromFirestore, createNewPostOnFirestore, getAllPostByUserUIDFromFirestore, getPostByIdFromFirestore, updatePostOnFirestore, deletePostFromFirestore } from '@/services/post.service';
 import { deleteAllCommentsFromPost } from '@/services/comment.service';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { ref } from 'vue';
-//------------------------------------------------------------------- FUNCIÓN PRINCIPAL
+
 const usePosts = () => {
-	//------------------------------------------------------------------- VARIABLES
 	const postsList = ref([]);
-	//------------------------------------------------------------------- METHODS
-	/**
-	 * Función para obtener todos los posts de Firestore ordenados por fecha de creación,
-	 * de forma descendente y en tiempo real
-	 * @param {Function} callback 
-	 * @returns 
-	 */
+
 	function getAllPosts(callback) {
 		try {
 			const unsubscribe = getAllPostFromFirestore(callback);
 			return unsubscribe;
 		} catch (error) {
 			console.error("Error getting documents: ", error);
-
 		}
 	}
 
-	/**
-	 * Función para agregar un nuevo post/tweet en Firestore
-	 * @param {Object} newPost 
-	 */
 	async function createNewPost(newPost) {
 		try {
 			if (newPost.file) {
-				newPost.file = await uploadPostFile(newPost.file, newPost.userUID); // cargamos el archivo y retornamos el fileURL (String)
+				newPost.file = await uploadPostFile(newPost.file, newPost.userUID);
 			}
 			await createNewPostOnFirestore(newPost);
 		} catch (error) {
@@ -40,11 +26,6 @@ const usePosts = () => {
 		}
 	}
 
-	/**
-	 * Función para obtener todos los posts de un usuario por su UID
-	 * @param {String} userId 
-	 * @returns {Array} userPosts
-	 */
 	function getAllPostsByUserUID(userId) {
 		try {
 			const userPosts = getAllPostByUserUIDFromFirestore(userId);
@@ -54,11 +35,6 @@ const usePosts = () => {
 		}
 	}
 
-	/**
-	 * Función para obtener un post por su ID
-	 * @param {String} postID 
-	 * @returns 
-	 */
 	async function getPostByID(postID, callback) {
 		try {
 			const unsubscribe = await getPostByIdFromFirestore(postID, callback);
@@ -68,11 +44,6 @@ const usePosts = () => {
 		}
 	}
 
-	/**
-	 * Función para actualizar un post por su ID
-	 * @param {String} postID 
-	 * @param {String} newDataPost 
-	 */
 	async function updatePost(postID, newDataPost, callback) {
 		try {
 			const unsubscribe = await updatePostOnFirestore(postID, newDataPost, callback);
@@ -82,12 +53,6 @@ const usePosts = () => {
 		}
 	}
 
-	/**
-	 * Función para subir un archivo al storage
-	 * @param {File} file
-	 * @param {String} userUID 
-	 * @returns {String} fileURL
-	 */
 	async function uploadPostFile(file, userUID) {
 		const filePath = `posts/${userUID}/postFiles/${file.name}`;
 		await uploadFile(filePath, file);

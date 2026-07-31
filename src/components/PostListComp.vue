@@ -1,8 +1,7 @@
 <script setup>
-//------------------------------------------------------------------- COMPONENTS
 import ContainerComp from './ContainerComp.vue';
 import PostItem from './PostItemComp.vue';
-//------------------------------------------------------------------- PROPS
+
 defineProps({
 	posts: {
 		type: Array,

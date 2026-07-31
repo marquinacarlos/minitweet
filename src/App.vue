@@ -1,27 +1,19 @@
 <script setup>
-//------------------------------------------------------------------- COMPOSABLES
 import useAuth from './composables/useAuth';
-//------------------------------------------------------------------- COMPONENTS
 import NavBar from '@components/NavBarComp.vue'
 import ContainerComp from '@components/ContainerComp.vue';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { onMounted } from 'vue';
-//------------------------------------------------------------------- VUE ROUTER
 import { RouterView, useRouter } from 'vue-router'
-//------------------------------------------------------------------- USE COMPOSABLES
+
 const router = useRouter();
 const { checkAuth } = useAuth();
-//------------------------------------------------------------------- METHODS
-/**
- * Actualiza el título de la página
- * @param {Object} to - Ruta actual
- */
+
 function updateTitle(to) {
 	const defaultNameApp = 'Minitweet';
 	const title = to.name ? `| ${to.name}` : '';
 	document.title = `${defaultNameApp} ${title}`
 }
-//------------------------------------------------------------------- LIFECYCLE
+
 onMounted(async () => {
 	try {
 		router.afterEach((to) => { updateTitle(to) })

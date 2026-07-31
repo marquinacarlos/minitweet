@@ -1,33 +1,25 @@
 <script setup>
-//------------------------------------------------------------------- FIREBASE SERVICES
 import { getPrivateMessages, savePrivateMessage } from '@/services/privateChat.service';
-//------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@/composables/useAuth.js';
 import useProfile from '@/composables/useProfile';
 import useLoading from '@/composables/useLoading';
-//------------------------------------------------------------------- COMPONENTS
 import ContainerComp from '@/components/ContainerComp.vue';
 import LoaderComp from '@/components/skeletons/LoaderComp.vue';
 import ProfilePhotoComp from '@/components/ProfilePhotoComp.vue';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { onMounted, ref, nextTick, onBeforeUnmount } from 'vue';
-//------------------------------------------------------------------- VUE ROUTER
 import { useRoute } from 'vue-router';
-//------------------------------------------------------------------- USE COMPOSABLES
+
 const route = useRoute();
 const { user } = useAuth();
 const { getUserById } = useProfile();
 const { loading, startLoading, endLoading } = useLoading();
-//------------------------------------------------------------------- DATA
+
 const userToChat = ref(null);
 const messages = ref([]);
 const newMessage = ref('');
-const messagesContainer = ref(null); // Referencia al contenedor de mensajes
+const messagesContainer = ref(null);
 const unsubscribe = ref(null);
-//------------------------------------------------------------------- METHODS
-/**
- * Envía un mensaje privado
- */
+
 async function sendMessage() {
 	try {
 		await savePrivateMessage(user.value.uid, userToChat.value.uid, newMessage.value);
@@ -38,19 +30,12 @@ async function sendMessage() {
 	}
 }
 
-/**
- * Desplaza el contenedor de mensajes al final
- */
 function scrollToBottom() {
 	if (messagesContainer.value) {
-		// Disclaimer: dejé los console.log para que se entienda el uso de cada propiedad. (Solo por fines educativos)
-		// console.log('scrollTop:', messagesContainer.value.scrollTop); // -> Descripción: Representa la cantidad de píxeles que el contenido de un elemento ha sido desplazado hacia arriba. -> Uso: Se utiliza para obtener o establecer la posición de desplazamiento vertical de un elemento.
-		// console.log('scrollHeight:', messagesContainer.value.scrollHeight); // -> Descripción: Representa la altura total de un elemento, incluido el contenido que no es visible debido al desbordamiento. -> Uso: Se utiliza para obtener la altura total de un elemento, incluido el contenido que no es visible debido al desbordamiento.
-		// console.log('clientHeight:', messagesContainer.value.clientHeight); // -> Descripción: Representa la altura de un elemento, incluido el relleno, pero sin bordes ni barras de desplazamiento. -> Uso: Se utiliza para obtener la altura de un elemento, incluido el relleno, pero sin bordes ni barras de desplazamiento.
 		messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight + 100;
 	}
 }
-//------------------------------------------------------------------- LIFECYCLE
+
 onMounted(async () => {
 	startLoading();
 	const { id } = route.params;
@@ -62,7 +47,7 @@ onMounted(async () => {
 		async (newMessages) => {
 			messages.value = newMessages;
 			endLoading();
-			await nextTick(); // Espera a que el DOM se actualice
+			await nextTick();
 			scrollToBottom();
 		}
 	);
@@ -78,18 +63,16 @@ onBeforeUnmount(() => {
 <template>
 	<div class="grid grid-rows-[auto_1fr] custom-height">
 		<h1 class="sr-only">Private chat</h1>
-		<!-- HEADER -->
 		<ContainerComp class="p-4 bg-black flex items-center gap-4 shadow">
 			<ProfilePhotoComp :src="userToChat?.photoURL" :alt="userToChat?.name" width="w-12" height="h-12" />
 			<h1 class="text-xl">{{ userToChat?.name }} <span class="text-xs text-gray-400">(Private Chat)</span></h1>
 		</ContainerComp>
-		<!-- CHAT -->
 		<template v-if="!loading">
 			<ul ref="messagesContainer" class="p-4 flex flex-col items-start gap-2 overflow-y-scroll">
 				<template v-if="messages.length">
-					<li v-for="message in messages" 
-						:key="message.id" 
-						class="text-white p-3 max-w-xs message-bubble" 
+					<li v-for="message in messages"
+						:key="message.id"
+						class="text-white p-3 max-w-xs message-bubble"
 						:class="{
 							'self-end rounded-l-lg rounded-br-lg sent': message.userID === user.uid,
 							'rounded-r-lg rounded-bl-lg received': message.userID !== user.uid
@@ -111,12 +94,11 @@ onBeforeUnmount(() => {
 		</template>
 	</div>
 
-	<!-- INPUT -->
 	<Teleport to="#barTop" v-if="!loading">
 		<ContainerComp class="flex gap-1">
 			<div class="space-y-2 w-full">
 				<form @submit.prevent="sendMessage" class="flex rounded-lg shadow-sm shadow-black/[.04] absolute bottom-1 w-full px-2">
-					<label for="message" class="sr-only">Mensaje</label>
+					<label for="message" class="sr-only">Message</label>
 					<input v-model="newMessage"
 						type="text"
 						id="message"
@@ -132,7 +114,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* dvh -> Dinamic viewport height */
 .custom-height {
 	height: calc(100dvh - var(--navbar-height) - 40px);
 }

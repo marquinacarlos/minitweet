@@ -1,24 +1,21 @@
 <script setup>
-//------------------------------------------------------------------- COMPOSABLES
 import usePosts from '@/composables/usePosts';
 import useLoading from '@/composables/useLoading';
 import useAuth from '@composables/useAuth';
 import useModal from '@/composables/useModal'
-//------------------------------------------------------------------- COMPONENTS
 import TitleComp from '@/components/TitleComp.vue';
 import PostList from '@/components/PostListComp.vue';
 import FeedSkeleton from '@/components/skeletons/FeedSkeleton.vue';
 import ContainerComp from '@components/ContainerComp.vue';
 import ModalComp from '@components/ModalComp.vue';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { onMounted, onBeforeUnmount, ref } from 'vue';
-//------------------------------------------------------------------- USE COMPOSABLES
+import { DEFAULT_POST_IMAGE } from '@/config/constants';
+
 const { user } = useAuth();
 const { openModal, closeModal } = useModal();
 const { loading, startLoading, endLoading } = useLoading();
 const { postsList, getAllPosts, createNewPost } = usePosts();
-//------------------------------------------------------------------- VARIABLES
-import { DEFAULT_POST_IMAGE } from '@/config/constants';
+
 const newPost = ref({
 	userUID: user.value?.uid,
 	title: '',
@@ -28,11 +25,6 @@ const newPost = ref({
 const unsubscribe = ref(null);
 const tempFileToPost = ref(null);
 
-
-//------------------------------------------------------------------- METHODS
-/**
- * Funcion para crear una nueva publicación
- */
 async function handlerSubmit() {
 	try {
 		await createNewPost(newPost.value);
@@ -49,9 +41,6 @@ async function handlerSubmit() {
 	closeModal();
 }
 
-/**
- * Funcion para cancelar la creación de una nueva publicación
- */
 function cancelNewPost() {
 	newPost.value = {
 		userUID: user.value.uid,
@@ -68,10 +57,6 @@ function removeFileToPost() {
 	tempFileToPost.value = null;
 }
 
-/**
- * Funcion para manejar el cambio de input file
- * @param e Evento de cambio de input file
- */
 function handlerFileToPost(e) {
 	const file = e.target.files[0];
 	const reader = new FileReader();
@@ -82,7 +67,6 @@ function handlerFileToPost(e) {
 	reader.readAsDataURL(file);
 }
 
-//------------------------------------------------------------------- LIFECYCLE
 onMounted(() => {
 	startLoading();
 	unsubscribe.value = getAllPosts((posts) => {
@@ -118,7 +102,7 @@ onBeforeUnmount(() => {
 		<ContainerComp class="bg-black rounded-lg p-4 max-w-md">
 			<ContainerComp v-if="tempFileToPost" class="max-w-72 mb-2">
 				<ContainerComp tag="figure" class="max-w-72 rounded-lg overflow-hidden">
-					<img :src="tempFileToPost" alt="Imagen del post">
+					<img :src="tempFileToPost" alt="Post image">
 				</ContainerComp>
 				<button type="button" @click="removeFileToPost"
 					class="mt-1 text-xs text-red-400 hover:text-red-300 transition">
@@ -126,22 +110,22 @@ onBeforeUnmount(() => {
 				</button>
 			</ContainerComp>
 			<form @submit.prevent="handlerSubmit()"
-				action="#" 
+				action="#"
 				class="flex flex-col gap-4">
 				<label for="title" class="sr-only">Title</label>
-				<input v-model="newPost.title" 
-					type="text" 
-					placeholder="Title" 
+				<input v-model="newPost.title"
+					type="text"
+					placeholder="Title"
 					class="custom-input">
 				<label for="body" class="sr-only">Content</label>
-				<textarea v-model="newPost.body" 
-					placeholder="Content" 
-					required 
+				<textarea v-model="newPost.body"
+					placeholder="Content"
+					required
 					class="custom-input resize-none"></textarea>
 				<label for="photo-upload" class="sr-only">Upload photo</label>
 				<input @change="handlerFileToPost"
-					type="file" 
-					id="photo-upload"  
+					type="file"
+					id="photo-upload"
 					accept="image/*"
 					class="w-full file:w-full file:transition-all file:cursor-pointer file:mr-4 file:py-2 file:rounded-lg file:border file:border-white file:text-sm file:font-semibold file:bg-violet-50 file:text-black hover:file:bg-black hover:file:text-white">
 				<ContainerComp class="flex flex-col gap-2">

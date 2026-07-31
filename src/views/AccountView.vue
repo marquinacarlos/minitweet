@@ -1,11 +1,9 @@
 <script setup>
-//------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@/composables/useAuth';
 import useProfile from '@/composables/useProfile';
 import useLoading from '@/composables/useLoading';
 import useModal from '@/composables/useModal';
 import usePosts from '@/composables/usePosts';
-//------------------------------------------------------------------- COMPONENTS
 import ContainerComp from '@/components/ContainerComp.vue';
 import AccountSkeleton from '@/components/skeletons/AccountSkeleton.vue';
 import TitleComp from '@/components/TitleComp.vue';
@@ -14,11 +12,9 @@ import ProfilePhotoComp from '@/components/ProfilePhotoComp.vue';
 import Modal from '@components/ModalComp.vue';
 import PostListComp from '@/components/PostListComp.vue';
 import { DEFAULT_PROFILE_PHOTO, DEFAULT_COVER_PHOTO } from '@/config/constants';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-//------------------------------------------------------------------- VUE ROUTER
 import { useRouter, useRoute, RouterLink } from 'vue-router';
-//------------------------------------------------------------------- USE COMPOSABLES
+
 const route = useRoute();
 const router = useRouter();
 const { getAllPostsByUserUID } = usePosts();
@@ -26,7 +22,7 @@ const { openModal, closeModal } = useModal();
 const { loading, startLoading, endLoading } = useLoading();
 const { user, logout } = useAuth();
 const { getUserById, updateProfilePhoto, updateCoverPhoto } = useProfile();
-//------------------------------------------------------------------- VARIABLES
+
 const userProfile = ref(null);
 const isOwnAccount = ref(false);
 const modalContent = ref(null);
@@ -34,17 +30,11 @@ const tempProfilePhotoPreview = ref(null);
 const tempCoverPhotoPreview = ref(null);
 const selectedFile = ref(null);
 const postFromUser = ref([]);
-//------------------------------------------------------------------- METHODS
-/**
- * Logout user
- */
+
 function handlerLogoutUser() {
 	if (isOwnAccount.value) logout().then(() => router.push('/login'));
 }
 
-/**
- * Save profile photo
- */
 async function saveProfilePhoto() {
 	if (isOwnAccount.value && selectedFile.value && tempProfilePhotoPreview.value !== userProfile.value?.photoURL && tempProfilePhotoPreview.value !== DEFAULT_PROFILE_PHOTO) {
 		const userConfirmed = confirm("Are you sure you want to change the image?");
@@ -56,19 +46,12 @@ async function saveProfilePhoto() {
 	}
 }
 
-/**
- * Cancel profile photo upload
- */
 function cancelProfilePhotoUpload() {
 	tempProfilePhotoPreview.value = userProfile.value?.photoURL || DEFAULT_PROFILE_PHOTO;
 	selectedFile.value = null;
 	closeModal();
 }
 
-/**
- * Handle profile photo upload
- * @param {Event} e
- */
 function handleProfilePhotoUpload(e) {
 	if (isOwnAccount.value) {
 		tempProfilePhotoPreview.value = userProfile.value?.photoURL || DEFAULT_PROFILE_PHOTO;
@@ -82,9 +65,6 @@ function handleProfilePhotoUpload(e) {
 	}
 }
 
-/**
- * Save cover photo
- */
 async function saveCoverPhoto() {
 	if (isOwnAccount.value && selectedFile.value && tempCoverPhotoPreview.value !== userProfile.value?.coverPhotoURL && tempCoverPhotoPreview.value !== DEFAULT_COVER_PHOTO) {
 		const userConfirmed = confirm("Are you sure you want to change the cover image?");
@@ -96,19 +76,12 @@ async function saveCoverPhoto() {
 	}
 }
 
-/**
- * Cancel cover photo upload
- */
 function cancelCoverPhotoUpload() {
 	tempCoverPhotoPreview.value = userProfile.value?.coverPhotoURL || DEFAULT_COVER_PHOTO;
 	selectedFile.value = null;
 	closeModal();
 }
 
-/**
- * Handle cover photo upload
- * @param {Event} e
- */
 function handleCoverPhotoUpload(e) {
 	if (isOwnAccount.value) {
 		tempCoverPhotoPreview.value = userProfile.value?.coverPhotoURL || DEFAULT_COVER_PHOTO;
@@ -122,20 +95,12 @@ function handleCoverPhotoUpload(e) {
 	}
 }
 
-/**
- * Open modal with selected content
- * @param {String} content
- */
 function handlerContentModal(content = null) {
 	modalContent.value = content;
 	if (modalContent.value) { openModal(); }
 }
 
-/**
- * Check if user is authenticated and load profile
- * @param {String} uid
- */
- async function checkUserProfile(uid) {
+async function checkUserProfile(uid) {
 	try {
 		startLoading();
 		if(user.value) {
@@ -153,18 +118,15 @@ function handlerContentModal(content = null) {
 	}
 }
 
-//------------------------------------------------------------------- LIFECYCLE HOOKS
 onMounted(async () => {
 	checkUserProfile(route.params.id);
 })
 
 onBeforeUnmount(() => closeModal());
 
-//------------------------------------------------------------------- WATCHERS
 watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.coverPhotoURL], async (newId) => {
 	checkUserProfile(newId[0]);
 })
-
 </script>
 
 <template>
@@ -228,7 +190,6 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 	</div>
 
 	<Modal>
-		<!-- COVER PHOTO -->
 		<template v-if="modalContent === 'coverPhoto'">
 			<ContainerComp class="max-w-96 px-2">
 				<ContainerComp tag="figure" class="max-w-96 aspect-w-16 aspect-h-9">
@@ -239,13 +200,13 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 				<ContainerComp tag="form" class="mt-2 flex flex-col gap-2">
 					<label for="photo-upload" class="block text-sm font-medium text-gray-300 text-center">Upload new photo</label>
 					<input @change="handleCoverPhotoUpload"
-						type="file" 
-						id="photo-upload" 
+						type="file"
+						id="photo-upload"
 						accept="image/*"
 						class="w-full file:w-full file:transition-all file:cursor-pointer file:mr-4 file:py-2 file:rounded-lg file:border file:border-white file:text-sm file:font-semibold file:bg-violet-50 file:text-black hover:file:bg-black hover:file:text-white">
 					<ContainerComp class="flex flex-col gap-2">
 						<button @click="saveCoverPhoto"
-							type="button" 
+							type="button"
 							:disabled="!Boolean(tempCoverPhotoPreview) || tempCoverPhotoPreview === userProfile?.coverPhotoURL || tempCoverPhotoPreview === DEFAULT_COVER_PHOTO"
 							class="w-full py-2 rounded-lg text-sm  font-semibold border disabled:border-gray-500 disabled:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
 							:class="{ 'bg-violet-50 text-black hover:text-white hover:bg-black': !!tempCoverPhotoPreview && tempCoverPhotoPreview !== userProfile?.coverPhotoURL && tempCoverPhotoPreview !== DEFAULT_COVER_PHOTO}">
@@ -260,7 +221,6 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 				</ContainerComp>
 			</ContainerComp>
 		</template>
-		<!-- PROFILE PHOTO -->
 		<template v-if="modalContent === 'profilePhoto'">
 			<ContainerComp class="max-w-96 px-2">
 				<ContainerComp tag="figure" class="aspect-w-1 aspect-h-1">
@@ -271,20 +231,20 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 				<ContainerComp tag="form" class="mt-2 flex flex-col gap-2">
 					<label for="photo-upload" class="block text-sm font-medium text-gray-300 text-center">Upload new photo</label>
 					<input @change="handleProfilePhotoUpload"
-						type="file" 
-						id="photo-upload" 
+						type="file"
+						id="photo-upload"
 						accept="image/*"
 						class="w-full file:w-full file:transition-all file:cursor-pointer file:mr-4 file:py-2 file:rounded-lg file:border file:border-white file:text-sm file:font-semibold file:bg-violet-50 file:text-black hover:file:bg-black hover:file:text-white">
 					<ContainerComp class="flex flex-col gap-2">
 						<button @click="saveProfilePhoto"
-							type="button" 
+							type="button"
 							:disabled="!Boolean(tempProfilePhotoPreview) || tempProfilePhotoPreview === userProfile?.photoURL || tempProfilePhotoPreview === DEFAULT_PROFILE_PHOTO"
 							class="w-full py-2 rounded-lg text-sm  font-semibold border disabled:border-gray-500 disabled:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
 							:class="{ 'bg-violet-50 text-black hover:text-white hover:bg-black': !!tempProfilePhotoPreview && tempProfilePhotoPreview !== userProfile?.photoURL && tempProfilePhotoPreview !== DEFAULT_PROFILE_PHOTO, }">
 							Save
 						</button>
 						<button @click="cancelProfilePhotoUpload"
-							type="button" 
+							type="button"
 							class="w-full py-2 rounded-lg border border-white text-sm font-semibold bg-violet-50 text-black hover:bg-black hover:text-white">
 							Cancel
 						</button>

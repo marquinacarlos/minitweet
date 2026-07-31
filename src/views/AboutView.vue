@@ -1,9 +1,7 @@
 <script setup>
-//------------------------------------------------------------------- COMPONENTS
 import ContainerComp from '@components/ContainerComp.vue';
 import TitleComp from '@/components/TitleComp.vue';
 import InstallButton from '@/components/InstallButton.vue';
-//------------------------------------------------------------------- VUE ROUTER
 import { RouterLink } from 'vue-router';
 </script>
 

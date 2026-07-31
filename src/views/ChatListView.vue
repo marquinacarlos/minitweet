@@ -1,26 +1,22 @@
 <script setup>
-//------------------------------------------------------------------- FIREBASE SERVICES
 import { getUserChats } from '@/services/privateChat.service';
-//------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@/composables/useAuth';
 import useProfile from '@/composables/useProfile';
 import useLoading from '@/composables/useLoading';
-//------------------------------------------------------------------- COMPONENTS
 import TitleComp from '@/components/TitleComp.vue';
 import ContainerComp from '@/components/ContainerComp.vue';
 import ProfilePhotoComp from '@/components/ProfilePhotoComp.vue';
 import LoaderComp from '@/components/skeletons/LoaderComp.vue';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-//------------------------------------------------------------------- USE COMPOSABLES
+
 const { user } = useAuth();
 const { getUserById } = useProfile();
 const { loading, startLoading, endLoading } = useLoading();
-//------------------------------------------------------------------- VARIABLES
+
 const chatContacts = ref([]);
 const unsubscribe = ref(null);
-//------------------------------------------------------------------- LIFECYCLE
+
 onMounted(() => {
 	startLoading();
 	unsubscribe.value = getUserChats(user.value.uid, async (chats) => {

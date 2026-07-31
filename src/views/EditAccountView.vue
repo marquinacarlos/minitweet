@@ -1,20 +1,15 @@
 <script setup>
-//------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@composables/useAuth';
 import useProfile from '@/composables/useProfile';
-//------------------------------------------------------------------- COMPONENTS
 import ContainerComp from '@/components/ContainerComp.vue';
 import TitleComp from '@/components/TitleComp.vue';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { ref } from 'vue';
-//------------------------------------------------------------------- VUE ROUTER
 import { useRouter } from 'vue-router';
 
-//------------------------------------------------------------------- USE COMPOSABLES
 const router = useRouter();
 const { user } = useAuth();
 const { updateUser } = useProfile();
-//------------------------------------------------------------------- VARIABLES
+
 const userLogged = ref({
 	uid: user.value.uid,
 	name: user.value.name,
@@ -24,10 +19,7 @@ const userLogged = ref({
 	photoURL: user.value.photoURL,
 	coverPhotoURL: user.value.coverPhotoURL,
 });
-//------------------------------------------------------------------- METHODS
-/**
- * Funcion para actualizar los datos del usuario
- */
+
 async function handlerSubmit() {
 	try {
 		await updateUser(userLogged.value);
@@ -48,10 +40,10 @@ async function handlerSubmit() {
 			<ContainerComp @submit.prevent="handlerSubmit" tag="form" class="flex-1" action="#">
 				<ContainerComp class="flex flex-col gap-4 items-center">
 					<ContainerComp>
-						<label for="name" class="sr-only">Nombre</label>
-						<input v-model="userLogged.name" 
-							type="text" 
-							id="name" 
+						<label for="name" class="sr-only">Name</label>
+						<input v-model="userLogged.name"
+							type="text"
+							id="name"
 							name="name"
 							placeholder="Name"
 							required
@@ -60,10 +52,10 @@ async function handlerSubmit() {
 
 					<ContainerComp>
 						<label for="username" class="sr-only">Username</label>
-						<input v-model="userLogged.username" 
-							type="text" 
+						<input v-model="userLogged.username"
+							type="text"
 							id="username"
-							name="username" 
+							name="username"
 							placeholder="Username"
 							required
 							class="w-full p-2 bg-transparent border-b focus:outline-none focus:border-blue-600 custom-input">
@@ -71,9 +63,9 @@ async function handlerSubmit() {
 
 					<ContainerComp>
 						<label for="email" class="sr-only">Email</label>
-						<input type="email" 
-							id="email" 
-							name="email" 
+						<input type="email"
+							id="email"
+							name="email"
 							:placeholder="`${userLogged.email} Email (coming soon)`"
 							required
 							disabled
@@ -82,8 +74,8 @@ async function handlerSubmit() {
 
 					<ContainerComp>
 						<label for="password" class="sr-only">Password</label>
-						<input v-model="userLogged.password" 
-							type="password" 
+						<input v-model="userLogged.password"
+							type="password"
 							id="password"
 							name="password"
 							placeholder="Password (coming soon)"
@@ -95,9 +87,9 @@ async function handlerSubmit() {
 					<!-- TODO: Add profile photo change function here -->
 
 					<ContainerComp>
-						<label for="bio" class="sr-only">Biografía</label>
-						<textarea v-model="userLogged.bio" 
-							type="text" 
+						<label for="bio" class="sr-only">Bio</label>
+						<textarea v-model="userLogged.bio"
+							type="text"
 							id="bio"
 							name="bio"
 							placeholder="Bio"

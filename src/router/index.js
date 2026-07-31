@@ -1,12 +1,9 @@
-//------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@composables/useAuth'
-//------------------------------------------------------------------- VISTAS
 import AboutView from '@views/AboutView.vue'
-//------------------------------------------------------------------- VUE ROUTER
 import { createRouter, createWebHistory } from 'vue-router'
-//------------------------------------------------------------------- USE COMPOSABLES
+
 const { user, checkAuth } = useAuth();
-//------------------------------------------------------------------- CONFIGURACIÓN DE RUTAS
+
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
@@ -22,7 +19,7 @@ const router = createRouter({
 		{ path: '/:catchAll(.*)', 	name: 'NotFound', 	component: () => import('../views/NotFoundView.vue') },
 	]
 })
-//------------------------------------------------------------------- GUARDS
+
 router.beforeEach(async (to, from, next) => {
 	await checkAuth();
 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth === true);
@@ -31,7 +28,7 @@ router.beforeEach(async (to, from, next) => {
 	if (requiresAuth && !isAuthenticated) {
 		next({ name: 'Login' });
 	} else if (isAuthenticated && (to.name === 'Login' || to.name === 'Signup')) {
-		if (from.fullPath === '/') next({ name: 'Feed' }); //evitamos el hardcodeo en el navegador a las rutas login o signup
+		if (from.fullPath === '/') next({ name: 'Feed' });
 		next(from.fullPath);
 	} else {
 		next();

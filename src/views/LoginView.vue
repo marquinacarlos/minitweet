@@ -1,31 +1,24 @@
 <script setup>
-//------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@composables/useAuth';
 import { getFirebaseErrorMessage } from '@/utils/firebaseErrors';
 import useLoading from '@/composables/useLoading';
-//------------------------------------------------------------------- COMPONENTS
 import ContainerComp from '@components/ContainerComp.vue';
 import TitleComp from '@/components/TitleComp.vue';
 import LoaderComp from '@/components/skeletons/LoaderComp.vue';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { ref } from 'vue';
-//------------------------------------------------------------------- VUE ROUTER
 import { RouterLink, useRouter } from 'vue-router';
-//------------------------------------------------------------------- USE COMPOSABLES
+
 const { loading, startLoading, endLoading } = useLoading();
 const router = useRouter();
 const { login, authError } = useAuth();
-//------------------------------------------------------------------- VARIABLES
+
 const userToLog = ref({
 	email: '',
 	password: ''
 });
 const errorMessage = ref(null);
 const showPassword = ref(false);
-//------------------------------------------------------------------- METHODS
-/**
- * Funcion para iniciar sesión
- */
+
 async function handlerSubmit() {
 	errorMessage.value = null;
 	try {

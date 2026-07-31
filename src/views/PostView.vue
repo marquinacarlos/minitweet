@@ -1,35 +1,31 @@
 <script setup>
-//------------------------------------------------------------------- COMPOSABLES
 import useAuth from '@/composables/useAuth';
 import useProfile from '@/composables/useProfile';
 import useModal from '@/composables/useModal';
 import usePosts from '@composables/usePosts.js';
 import useLoading from '@/composables/useLoading';
 import useComments from '@/composables/useComments';
-//------------------------------------------------------------------- COMPONENTS
 import TitleComp from '@/components/TitleComp.vue';
 import ModalComp from '@/components/ModalComp.vue';
 import ContainerComp from '@/components/ContainerComp.vue';
 import ExpandableText from '@/components/ExpandableText.vue';
 import LoaderComp from '@/components/skeletons/LoaderComp.vue';
 import PostItemComp from '@/components/PostItemComp.vue';
-//------------------------------------------------------------------- HELPERS
 import { formatRelativeDate } from '@/utils/date';
 import { DEFAULT_PROFILE_PHOTO } from '@/config/constants';
 import { deleteFileByURL } from '@/services/storage.service';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { useRoute, useRouter } from 'vue-router';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
-//------------------------------------------------------------------- USE COMPOSABLES
+
 const route = useRoute();
 const router = useRouter();
 const { user } = useAuth();
 const { getUserById } = useProfile();
 const { getPostByID, updatePost, deletePost } = usePosts();
-const { modal, closeModal } = useModal(); // TODO: ESTA MODAL ES PARA EDITAR EL POST
+const { modal, closeModal } = useModal();
 const { loading, startLoading, endLoading } = useLoading();
 const { comments, getCommentsByPostID, saveComment, deleteComment } = useComments();
-//------------------------------------------------------------------- VARIABLES
+
 const post = ref(null);
 const unsubscribeToPost = ref(null);
 const unsubscribeTocomment = ref(null);
@@ -45,10 +41,7 @@ const updatePostData = ref({
 });
 const tempEditFilePreview = ref(null);
 const editFileAction = ref(null);
-//------------------------------------------------------------------- METHODS
-/**
- * Guarda un comentario en la base de datos
- */
+
 async function handlerSubmitComment() {
 	try {
 		await saveComment({ ...newComment.value });
@@ -58,13 +51,6 @@ async function handlerSubmitComment() {
 	}
 }
 
-/**
- * Función para convertir un timestamp a una fecha
- * @param {Object} timestamp
- */
-/**
- * Actualiza un post en la base de datos
- */
 function handleEditFileChange(e) {
 	const file = e.target.files[0];
 	if (!file) return;
@@ -106,9 +92,6 @@ async function handlerSubmitEdit() {
 	closeModal();
 }
 
-/**
- * Cancela la edición de un post
- */
 async function handleDeleteComment(commentId) {
 	if (!confirm('Are you sure you want to delete this comment?')) return;
 	try {
@@ -138,7 +121,7 @@ function cancelEdit() {
 	editFileAction.value = null;
 	closeModal();
 }
-//------------------------------------------------------------------- LIFECYCLE
+
 onMounted(async () => {
 	try {
 		startLoading();
@@ -186,16 +169,11 @@ onBeforeUnmount(() => {
 	<div class="grid grid-rows-[1fr] h-[calc(100dvh-var(--navbar-height)-40px)] w-full">
 		<template v-if="!loading">
 			<ContainerComp v-if="post" class="flex flex-col overflow-y-scroll">
-				<!-- TÍTULO -->
 				<TitleComp text="Post" :stickyTop="true" />
-				<!-- POST|PUBLICAIÓN -->
 				<PostItemComp :post="post" class="sticky top-14" :editPost="post.userUID === user.uid" />
-				<!-- COMENTARIOS -->
 				<div v-if="comments.length" class="w-full flex">
 					<ContainerComp tag="ul" class="pb-1 flex flex-col">
-						<!-- COMENTARIO -->
 						<li v-for="comment in comments" :key="comment.id" class="border-b border-gray-800 pb-2 mt-2 bg-gray-900 bg-opacity-35 rounded-lg pl-4 py-2 min-h-[57px] w-full">
-							<!-- USUARIO -->
 							<div class="flex gap-2 items-start">
 								<figure class="w-10 h-10 min-w-10 rounded-full overflow-hidden">
 									<RouterLink :to="{ name: 'Account', params: { id: comment.user.uid } }">
@@ -213,7 +191,6 @@ onBeforeUnmount(() => {
 									</RouterLink>
 								</h2>
 							</div>
-							<!-- COMENTARIO -->
 							<div class="ml-12 -mt-4 flex flex-col">
 									<ExpandableText :text="comment.comment" class="text-xs" />
 								<div class="flex justify-between items-center mt-2 mr-2">
@@ -246,10 +223,10 @@ onBeforeUnmount(() => {
 
 	<Teleport to="#barTop">
 		<form @submit.prevent="handlerSubmitComment" class="flex rounded-lg shadow-sm shadow-black/[.04] absolute bottom-1 w-full px-2">
-			<label for="comment" class="sr-only">Comentar</label>
-			<input v-model="newComment.comment" 
-				type="text" 
-				id="comment" 
+			<label for="comment" class="sr-only">Comment</label>
+			<input v-model="newComment.comment"
+				type="text"
+				id="comment"
 				placeholder="Comment"
 				class="text-slate-200 bg-gray-600 bg-opacity-40 flex h-9 w-full rounded-lg border border-input px-3 py-2 text-sm text-foreground shadow-black/[.04] placeholder:text-muted-foreground/70 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0  focus-visible:ring-offset-1 -me-px flex-1 rounded-e-none focus-visible:z-10" />
 			<button :disabled="newComment.comment.length === 0" class="text-slate-200 bg-gray-600 bg-opacity-40 inline-flex items-center rounded-e-lg border border-input px-3 text-sm text-foreground hover:bg-accent hover:text-foreground focus:z-10 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0  focus-visible:ring-offset-1 disabled:text-gray-700 disabled:cursor-not-allowed">
@@ -262,7 +239,7 @@ onBeforeUnmount(() => {
 		<ContainerComp @submit.prevent="handlerSubmitEdit" tag="form" class="flex-1 bg-black rounded-lg p-4 max-w-md">
 			<ContainerComp class="flex flex-col gap-4 items-center">
 				<ContainerComp>
-					<label for="title" class="sr-only">Titulo</label>
+					<label for="title" class="sr-only">Title</label>
 					<input v-model="updatePostData.title"
 						type="text"
 						id="title"
@@ -284,7 +261,7 @@ onBeforeUnmount(() => {
 
 				<ContainerComp v-if="tempEditFilePreview || (post?.file && editFileAction !== 'remove')">
 					<figure class="max-w-40 rounded-lg overflow-hidden">
-						<img :src="tempEditFilePreview || post?.file" alt="Imagen del post">
+						<img :src="tempEditFilePreview || post?.file" alt="Post image">
 					</figure>
 					<button type="button" @click="removeEditFile"
 						class="mt-1 text-xs text-red-400 hover:text-red-300">

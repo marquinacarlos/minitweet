@@ -1,5 +1,4 @@
 <script setup>
-//------------------------------------------------------------------- COMPONENTS
 import PostSkeleton from './PostSkeleton.vue';
 </script>
 
@@ -17,5 +16,4 @@ import PostSkeleton from './PostSkeleton.vue';
 		<PostSkeleton />
 		<PostSkeleton />
 	</div>
-
 </template>

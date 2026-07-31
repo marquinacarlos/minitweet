@@ -1,5 +1,4 @@
 <script setup>
-//------------------------------------------------------------------- COMPONENTS
 import ContainerComp from '../ContainerComp.vue';
 import PostSkeleton from './PostSkeleton.vue';
 </script>
@@ -7,16 +6,12 @@ import PostSkeleton from './PostSkeleton.vue';
 <template>
 	<ContainerComp class="flex-1 flex flex-col animate-pulse">
 		<ContainerComp class="flex-1 flex flex-col gap-4">
-			<!-- TÍTULO -->
 			<div class="h-8 bg-slate-700 rounded mt-4"></div>
 			<ContainerComp class="flex flex-col ">
-				<!-- FOTO DE PORTADA -->
 				<div class="h-0 pb-[56.25%] bg-slate-700 rounded my-4"></div>
 				<div class="flex justify-between items-end -mt-10 xs:-mt-12">
-					<!-- FOTO DE PERFIL -->
 					<div class="rounded-full bg-slate-700 h-20 w-20 ml-4 border-4 border-black">
 					</div>
-					<!-- BOTONES -->
 					<div class="flex gap-2">
 						<div class="rounded-full bg-slate-700 h-10 w-20"></div>
 						<div class="rounded-full bg-slate-700 h-10 w-20"></div>

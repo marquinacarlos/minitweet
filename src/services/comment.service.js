@@ -1,13 +1,6 @@
-//------------------------------------------------------------------- FIREBASE CONFIG
 import { db } from '@/services/firebase.service';
-//------------------------------------------------------------------- FIREBASE SERVICES
 import { collection, addDoc, query, serverTimestamp, onSnapshot, orderBy, limit, doc, deleteDoc, getDocs } from 'firebase/firestore';
-//------------------------------------------------------------------- FUNCIONES
-/**
- * Función para obtener los comentarios de un post especifico
- * @param {String} postID 
- * @returns Array<Comment>
- */
+
 export function getCommentsFromFirestore(postID, callback) {
 	const q = query(collection(db, 'posts', postID, 'comments'), orderBy('createdAt', 'asc'), limit(20));
 	const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -41,6 +34,6 @@ export async function saveCommentToFirestore({ postID, comment, userUID }) {
 			updatedAt: serverTimestamp()
 		})
 	} catch (error) {
-		console.error('Error guardando comentario:', error);
+		console.error('Error saving comment:', error);
 	}
 }

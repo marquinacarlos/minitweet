@@ -1,16 +1,8 @@
-//------------------------------------------------------------------- FIREBASE CONFIG
 import { db } from '@/services/firebase.service';
-//------------------------------------------------------------------- FIREBASE SERVICES
 import { collection, addDoc, getDocs, query, where, serverTimestamp, limit, orderBy, onSnapshot } from 'firebase/firestore';
-//------------------------------------------------------------------- VARIABLES
+
 const privateChatCollectionRef = collection(db, 'privateChats');
-//------------------------------------------------------------------- FUNCIONES
-/**
- * Obtiene o crea un documento de chat privado entre dos usuarios.
- * @param {string} senderID 
- * @param {string} receiverID 
- * @returns {Promise<DocumentReference>}
- */
+
 async function getChatDocument(senderID, receiverID) {
 	try {
 		const q = query(privateChatCollectionRef, where('users', '==', {
@@ -33,17 +25,11 @@ async function getChatDocument(senderID, receiverID) {
 		}
 		return chatDocument;
 	} catch (error) {
-		console.error('Error obteniendo/creando documento de chat:', error);
+		console.error('Error getting/creating chat document:', error);
 		throw error;
 	}
 }
 
-/**
- * Guarda un mensaje privado en la base de datos.
- * @param {String} senderID ID del usuario que envía el mensaje
- * @param {String} receiverID ID del usuario que recibe el mensaje
- * @param {String} message Mensaje a enviar
- */
 export async function savePrivateMessage(senderID, receiverID, message) {
 	try {
 		const chatDocument = await getChatDocument(senderID, receiverID);
@@ -54,18 +40,11 @@ export async function savePrivateMessage(senderID, receiverID, message) {
 			created_at: serverTimestamp()
 		});
 	} catch (error) {
-		console.error('Error guardando mensaje privado:', error);
+		console.error('Error saving private message:', error);
 		throw error;
 	}
 }
 
-/**
- * Obtiene mensajes privados en tiempo real entre dos usuarios.
- * @param {String} senderID ID del usuario que envía el mensaje
- * @param {String} receiverID ID del usuario que recibe el mensaje
- * @param {Function} callback Función de callback para manejar los mensajes
- * @returns {Function} Función para cancelar la suscripción al listener
- */
 export function getUserChats(userUID, callback) {
 	const q = query(privateChatCollectionRef, where(`users.${userUID}`, '==', true));
 	const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -103,7 +82,7 @@ export function getPrivateMessages(senderID, receiverID, callback) {
 			}
 		};
 	} catch (error) {
-		console.error('Error obteniendo mensajes privados:', error);
+		console.error('Error getting private messages:', error);
 		throw error;
 	}
 }

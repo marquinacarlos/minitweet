@@ -1,37 +1,25 @@
 <script setup>
-//------------------------------------------------------------------- COMPOSABLES
 import useProfile from '@/composables/useProfile';
 import useModal from '@/composables/useModal';
-//------------------------------------------------------------------- COMPONENTS
 import ContainerComp from './ContainerComp.vue';
 import ExpandableText from './ExpandableText.vue';
-//------------------------------------------------------------------- HELPERS
 import { formatRelativeDate } from '@/utils/date';
 import { DEFAULT_PROFILE_PHOTO } from '@/config/constants';
-//------------------------------------------------------------------- VUE COMPOSITION API
 import { RouterLink } from 'vue-router';
 import { onMounted, ref } from 'vue';
-//------------------------------------------------------------------- USE COMPOSABLES
+
 const { getUserById } = useProfile();
 const { openModal } = useModal();
-//------------------------------------------------------------------- VARIABLES
 const userFromPost = ref(null);
-//------------------------------------------------------------------- METHODS
-/**
- * Convierte un timestamp de Firestore a un objeto Date
- * @param {Object} timestamp Timestamp de Firestore
- * @returns {Date} Objeto Date
- */
-//------------------------------------------------------------------- LIFECYCLE
+
 onMounted(async () => {
 	try {
 		if (props.post.userUID) userFromPost.value = await getUserById(props.post.userUID);
 	} catch (error) {
 		console.error(error);
-
 	}
 });
-//------------------------------------------------------------------- PROPS
+
 const props = defineProps({
 	post: {
 		type: Object,
@@ -45,9 +33,7 @@ const props = defineProps({
 </script>
 
 <template>
-	<!-- <ContainerComp tag="li"> -->
 	<article class="bg-zinc-950 rounded-t-lg border-b border-gray-800 pb-4 pt-2 ">
-		<!-- DATOS DEL USUARIO -->
 		<header class="flex gap-2 items-start pl-2">
 			<figure v-if="post.userUID" class="w-10 h-10">
 				<router-link :to="{ name: 'Account', params: { id: post.userUID } }">
@@ -72,7 +58,6 @@ const props = defineProps({
 				Edit
 			</button>
 		</header>
-		<!-- CONTENIDO DE LA PUBLICACIÓN -->
 		<section class="bg-opacity-50 w-full pl-14 pr-2 -mt-5">
 			<RouterLink v-if="post?.title" :to="{ name: 'Post', params: { id: post?.id } }">
 				<h3 class="font-bold break-words whitespace-normal">{{ post.title }}</h3>
@@ -81,7 +66,7 @@ const props = defineProps({
 			<RouterLink v-if="post?.file" :to="{ name: 'Post', params: { id: post?.id } }">
 				<div class="w-full mt-2">
 					<figure class="max-w-60 rounded-lg overflow-hidden">
-						<img alt="Imagen de la publicación" :src="post?.file">
+						<img alt="Post image" :src="post?.file">
 					</figure>
 				</div>
 			</RouterLink>

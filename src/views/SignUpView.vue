@@ -46,7 +46,7 @@ async function handlerSubmit() {
         <div class="grid place-items-center grid-rows-[1fr] h-[calc(100dvh-var(--navbar-height))]">
                 <template v-if="!loading">
                         <ContainerComp class="flex flex-col gap-6 max-w-96">
-                        <TitleComp text="Registrarse" />
+                        <TitleComp text="Sign up" />
                         <ContainerComp @submit.prevent="handlerSubmit" tag="form" class="flex-1">
                                 <ContainerComp class="flex flex-col gap-4 items-center">
                                         <ContainerComp>
@@ -55,7 +55,7 @@ async function handlerSubmit() {
 							type="text" 
 							id="name" 
 							name="name"
-                                                        placeholder="Nombre"
+                                                        placeholder="Name"
 							required
                                                         class="custom-input">
                                         </ContainerComp>
@@ -66,7 +66,7 @@ async function handlerSubmit() {
 							type="text" 
 							id="username"
                                                         name="username" 
-							placeholder="Nombre de usuario"
+							placeholder="Username"
 							required
                                                         class="custom-input">
                                         </ContainerComp>
@@ -77,7 +77,7 @@ async function handlerSubmit() {
 							type="email" 
 							id="email" 
 							name="email"
-                                                        placeholder="Correo electrónico"
+                                                        placeholder="Email"
 							required
                                                         class="custom-input">
                                         </ContainerComp>
@@ -88,24 +88,24 @@ async function handlerSubmit() {
 							:type="showPassword ? 'text' : 'password'"
 							id="password"
                                                         name="password"
-							placeholder="Contraseña"
+							placeholder="Password"
 							required
                                                         class="custom-input pr-16">
 						<button type="button" @click="showPassword = !showPassword"
 							class="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-white">
-							{{ showPassword ? 'Ocultar' : 'Mostrar' }}
+							{{ showPassword ? 'Hide' : 'Show' }}
 						</button>
                                         </ContainerComp>
 
                                         <p v-if="errorMessage" class="text-red-500 text-sm text-center">{{ errorMessage }}</p>
 
                                         <ContainerComp>
-                                                <button type="submit" class="btn-primary">Registrarse</button>
+                                                <button type="submit" class="btn-primary">Sign up</button>
                                         </ContainerComp>
                                 </ContainerComp>
                         </ContainerComp>
                         <ContainerComp tag="p" class="text-xs text-center">
-				Ya tengo cuenta, <RouterLink to="/login" class="text-blue-700 hover:underline">iniciar sesión</RouterLink>
+				Already have an account? <RouterLink to="/login" class="text-blue-700 hover:underline">Log in</RouterLink>
 			</ContainerComp>
                 </ContainerComp>
                 </template>

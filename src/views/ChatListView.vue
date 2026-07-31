@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 				</li>
 			</ContainerComp>
 			<ContainerComp v-else class="flex flex-col justify-center items-center">
-				<p class="text-gray-400 text-sm">No tienes conversaciones aun.</p>
+				<p class="text-gray-400 text-sm">No conversations yet.</p>
 			</ContainerComp>
 		</template>
 		<template v-else>

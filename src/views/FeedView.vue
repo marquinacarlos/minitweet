@@ -59,7 +59,13 @@ function cancelNewPost() {
 		body: '',
 		file: ''
 	};
+	tempFileToPost.value = null;
 	closeModal();
+}
+
+function removeFileToPost() {
+	newPost.value.file = '';
+	tempFileToPost.value = null;
 }
 
 /**
@@ -104,16 +110,20 @@ onBeforeUnmount(() => {
 	<Teleport to="#barTop" v-if="!loading">
 		<button @click="openModal"
 			class="absolute bottom-1 right-0 bg-white text-black px-4 py-2 rounded-lg transition border border-transparent hover:bg-black hover:border-white hover:text-white">
-			Publicar
+			Post
 		</button>
 	</Teleport>
 
 	<ModalComp :fn="cancelNewPost">
 		<ContainerComp class="bg-black rounded-lg p-4 max-w-md">
-			<ContainerComp class="max-w-72 mb-2">
-				<ContainerComp v-if="tempFileToPost" tag="figure" class="max-w-72 rounded-lg overflow-hidden">
-					<img :src="tempFileToPost || DEFAULT_POST_IMAGE" :alt="'Foto de perfil del usuario'">
+			<ContainerComp v-if="tempFileToPost" class="max-w-72 mb-2">
+				<ContainerComp tag="figure" class="max-w-72 rounded-lg overflow-hidden">
+					<img :src="tempFileToPost" alt="Imagen del post">
 				</ContainerComp>
+				<button type="button" @click="removeFileToPost"
+					class="mt-1 text-xs text-red-400 hover:text-red-300 transition">
+					Remove image
+				</button>
 			</ContainerComp>
 			<form @submit.prevent="handlerSubmit()"
 				action="#" 
@@ -121,11 +131,11 @@ onBeforeUnmount(() => {
 				<label for="title" class="sr-only">Título</label>
 				<input v-model="newPost.title" 
 					type="text" 
-					placeholder="Título" 
+					placeholder="Title" 
 					class="custom-input">
 				<label for="body" class="sr-only">Contenido</label>
 				<textarea v-model="newPost.body" 
-					placeholder="Contenido" 
+					placeholder="Content" 
 					required 
 					class="custom-input resize-none"></textarea>
 				<label for="photo-upload" class="sr-only">Subir nueva foto</label>
@@ -135,8 +145,8 @@ onBeforeUnmount(() => {
 					accept="image/*"
 					class="w-full file:w-full file:transition-all file:cursor-pointer file:mr-4 file:py-2 file:rounded-lg file:border file:border-white file:text-sm file:font-semibold file:bg-violet-50 file:text-black hover:file:bg-black hover:file:text-white">
 				<ContainerComp class="flex flex-col gap-2">
-					<button type="submit" class="btn-primary text-sm">Publicar</button>
-					<button @click="cancelNewPost" type="button" class="btn-secondary text-sm">Cancelar</button>
+					<button type="submit" class="btn-primary text-sm">Publish</button>
+					<button @click="cancelNewPost" type="button" class="btn-secondary text-sm">Cancel</button>
 				</ContainerComp>
 			</form>
 		</ContainerComp>

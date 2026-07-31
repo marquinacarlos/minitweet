@@ -42,7 +42,7 @@ async function handlerSubmit() {
 	<div class="grid grid-rows-[1fr] h-[calc(100dvh-var(--navbar-height))] place-items-center overflow-y-auto">
 		<ContainerComp class="flex flex-col gap-6">
 			<ContainerComp>
-				<TitleComp text="Editar cuenta" :stickyTop="true" />
+				<TitleComp text="Edit account" :stickyTop="true" />
 				<ContainerComp class="text-xs text-center font-bold text-gray-300 text-opacity-40 mt-2">#{{ userLogged.uid }}</ContainerComp>
 			</ContainerComp>
 			<ContainerComp @submit.prevent="handlerSubmit" tag="form" class="flex-1" action="#">
@@ -53,7 +53,7 @@ async function handlerSubmit() {
 							type="text" 
 							id="name" 
 							name="name"
-							placeholder="Nombre"
+							placeholder="Name"
 							required
 							class="w-full p-2 bg-transparent border-b focus:outline-none focus:border-blue-600 custom-input">
 					</ContainerComp>
@@ -74,7 +74,7 @@ async function handlerSubmit() {
 						<input type="email" 
 							id="email" 
 							name="email" 
-							:placeholder="`${userLogged.email} Email (proximamente)`"
+							:placeholder="`${userLogged.email} Email (coming soon)`"
 							required
 							disabled
 							class="w-full p-2 bg-transparent border-b focus:outline-none focus:border-blue-600 custom-input opacity-30 cursor-not-allowed">
@@ -86,7 +86,7 @@ async function handlerSubmit() {
 							type="password" 
 							id="password"
 							name="password"
-							placeholder="Contraseña (proximamente)"
+							placeholder="Password (coming soon)"
 							required
 							disabled
 							class="w-full p-2 bg-transparent border-b focus:outline-none focus:border-blue-600 custom-input opacity-30 cursor-not-allowed">
@@ -100,15 +100,15 @@ async function handlerSubmit() {
 							type="text" 
 							id="bio"
 							name="bio"
-							placeholder="Biografía"
+							placeholder="Bio"
 							required
 							class="w-full p-2 bg-transparent border-b focus:outline-none focus:border-blue-600 custom-input resize-none">
                                                 </textarea>
 					</ContainerComp>
 
 					<ContainerComp class="flex flex-col gap-2">
-						<button type="submit" class="btn-primary">Guardar cambios</button>
-						<button type="button" @click="router.back()" class="btn-secondary">Cancelar</button>
+						<button type="submit" class="btn-primary">Save changes</button>
+						<button type="button" @click="router.back()" class="btn-secondary">Cancel</button>
 					</ContainerComp>
 				</ContainerComp>
 			</ContainerComp>

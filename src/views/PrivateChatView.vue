@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
 				</template>
 				<template v-else>
 					<li class="flex-1 w-full p-4 flex flex-col items-center justify-center">
-						<p class="text-gray-400 text-xs">No hay mensajes...</p>
+						<p class="text-gray-400 text-xs">No messages yet...</p>
 					</li>
 				</template>
 			</ul>
@@ -120,10 +120,10 @@ onBeforeUnmount(() => {
 					<input v-model="newMessage"
 						type="text"
 						id="message"
-						placeholder="Mensaje"
+						placeholder="Message"
 						class="bg-gray-600 bg-opacity-40 text-slate-200 flex h-9 w-full rounded-lg border border-input px-3 py-2 text-sm text-foreground shadow-black/[.04] placeholder:text-muted-foreground/70 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0  focus-visible:ring-offset-1 -me-px flex-1 rounded-e-none focus-visible:z-10" />
 					<button :disabled="!newMessage && !newMessage.length" class="text-slate-200 bg-gray-600 bg-opacity-40 inline-flex items-center rounded-e-lg border border-input px-3 text-sm text-foreground hover:bg-accent hover:text-foreground focus:z-10 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0  focus-visible:ring-offset-1 disabled:text-gray-700 disabled:cursor-not-allowed">
-						Enviar
+						Send
 					</button>
 				</form>
 			</div>

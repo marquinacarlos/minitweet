@@ -110,7 +110,7 @@ async function handlerSubmitEdit() {
  * Cancela la edición de un post
  */
 async function handleDeleteComment(commentId) {
-	if (!confirm('¿Seguro que deseas eliminar este comentario?')) return;
+	if (!confirm('Are you sure you want to delete this comment?')) return;
 	try {
 		await deleteComment(route.params.id, commentId);
 	} catch (error) {
@@ -119,7 +119,7 @@ async function handleDeleteComment(commentId) {
 }
 
 async function handleDeletePost() {
-	if (!confirm('¿Seguro que deseas eliminar esta publicación? Se borrarán todos los comentarios.')) return;
+	if (!confirm('Are you sure you want to delete this post? All comments will be removed.')) return;
 	try {
 		await deletePost(post.value);
 		router.push({ name: 'Feed' });
@@ -197,7 +197,7 @@ onBeforeUnmount(() => {
 						<li v-for="comment in comments" :key="comment.id" class="border-b border-gray-800 pb-2 mt-2 bg-gray-900 bg-opacity-35 rounded-lg pl-4 py-2 min-h-[57px] w-full">
 							<!-- USUARIO -->
 							<div class="flex gap-2 items-start">
-								<figure class="w-12 h-12 min-w-12 rounded-full overflow-hidden">
+								<figure class="w-10 h-10 min-w-10 rounded-full overflow-hidden">
 									<RouterLink :to="{ name: 'Account', params: { id: comment.user.uid } }">
 										<img :src="comment.user.photoURL || DEFAULT_PROFILE_PHOTO"
 											:alt="comment.user.name"
@@ -214,12 +214,12 @@ onBeforeUnmount(() => {
 								</h2>
 							</div>
 							<!-- COMENTARIO -->
-							<div class="ml-14 -mt-4 flex flex-col">
+							<div class="ml-12 -mt-4 flex flex-col">
 									<ExpandableText :text="comment.comment" class="text-xs" />
 								<div class="flex justify-between items-center mt-2 mr-2">
 									<button v-if="comment.userUID === user.uid" @click="handleDeleteComment(comment.id)"
 										type="button" class="text-xs text-red-400 hover:text-red-300 transition">
-										Eliminar
+										Delete
 									</button>
 									<span v-else></span>
 									<p v-if="comment?.createdAt" class="text-xs text-gray-500">
@@ -231,7 +231,7 @@ onBeforeUnmount(() => {
 					</ContainerComp>
 				</div>
 				<div v-else class="flex flex-col justify-center items-center">
-					<p class="mt-4 text-gray-400 text-sm">Aún no hay comentarios...</p>
+					<p class="mt-4 text-gray-400 text-sm">No comments yet...</p>
 				</div>
 			</ContainerComp>
 		</template>
@@ -250,10 +250,10 @@ onBeforeUnmount(() => {
 			<input v-model="newComment.comment" 
 				type="text" 
 				id="comment" 
-				placeholder="Comentar"
+				placeholder="Comment"
 				class="text-slate-200 bg-gray-600 bg-opacity-40 flex h-9 w-full rounded-lg border border-input px-3 py-2 text-sm text-foreground shadow-black/[.04] placeholder:text-muted-foreground/70 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0  focus-visible:ring-offset-1 -me-px flex-1 rounded-e-none focus-visible:z-10" />
 			<button :disabled="newComment.comment.length === 0" class="text-slate-200 bg-gray-600 bg-opacity-40 inline-flex items-center rounded-e-lg border border-input px-3 text-sm text-foreground hover:bg-accent hover:text-foreground focus:z-10 focus-visible:border-0 focus-visible:outline-none focus-visible:ring-0  focus-visible:ring-offset-1 disabled:text-gray-700 disabled:cursor-not-allowed">
-				Enviar
+				Send
 			</button>
 		</form>
 	</Teleport>
@@ -267,7 +267,7 @@ onBeforeUnmount(() => {
 						type="text"
 						id="title"
 						name="title"
-						placeholder="Titulo"
+						placeholder="Title"
 						class="custom-input">
 				</ContainerComp>
 
@@ -277,7 +277,7 @@ onBeforeUnmount(() => {
 						type="text"
 						id="body"
 						name="body"
-						placeholder="Escribe tu Tweet"
+						placeholder="Write your post"
 						required
 						class="custom-input">
 				</ContainerComp>
@@ -288,13 +288,13 @@ onBeforeUnmount(() => {
 					</figure>
 					<button type="button" @click="removeEditFile"
 						class="mt-1 text-xs text-red-400 hover:text-red-300">
-						Eliminar imagen
+						Remove image
 					</button>
 				</ContainerComp>
 
 				<ContainerComp>
 					<label for="edit-photo-upload" class="block text-sm text-gray-400 mb-1">
-						{{ post?.file ? 'Cambiar imagen' : 'Agregar imagen' }}
+						{{ post?.file ? 'Change image' : 'Add image' }}
 					</label>
 					<input @change="handleEditFileChange"
 						type="file"
@@ -307,14 +307,14 @@ onBeforeUnmount(() => {
 					<button type="submit"
 						:disabled="!updatePostData.title && !updatePostData.body"
 						class="btn-primary text-sm disabled:cursor-not-allowed disabled:bg-gray-900 disabled:hover:border-transparent disabled:text-gray-600">
-						Actualizar publicacion
+						Update post
 					</button>
 					<button @click="handleDeletePost" type="button"
 						class="w-full py-2 text-sm text-red-400 rounded-lg border border-red-400 transition hover:bg-red-400 hover:text-black">
-						Eliminar publicacion
+						Delete post
 					</button>
 					<button @click="cancelEdit" type="button" class="btn-secondary text-sm border border-white">
-						Cancelar
+						Cancel
 					</button>
 				</ContainerComp>
 			</ContainerComp>

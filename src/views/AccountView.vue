@@ -47,7 +47,7 @@ function handlerLogoutUser() {
  */
 async function saveProfilePhoto() {
 	if (isOwnAccount.value && selectedFile.value && tempProfilePhotoPreview.value !== userProfile.value?.photoURL && tempProfilePhotoPreview.value !== DEFAULT_PROFILE_PHOTO) {
-		const userConfirmed = confirm("¿Estás seguro de que deseas cambiar la imagen?");
+		const userConfirmed = confirm("Are you sure you want to change the image?");
 		if (userConfirmed) {
 			await updateProfilePhoto(selectedFile.value);
 			userProfile.value.photoURL = user.value.photoURL;
@@ -87,7 +87,7 @@ function handleProfilePhotoUpload(e) {
  */
 async function saveCoverPhoto() {
 	if (isOwnAccount.value && selectedFile.value && tempCoverPhotoPreview.value !== userProfile.value?.coverPhotoURL && tempCoverPhotoPreview.value !== DEFAULT_COVER_PHOTO) {
-		const userConfirmed = confirm("¿Estás seguro de que deseas cambiar la imagen de portada?");
+		const userConfirmed = confirm("Are you sure you want to change the cover image?");
 		if (userConfirmed) {
 			await updateCoverPhoto(selectedFile.value);
 			userProfile.value.coverPhotoURL = user.value.coverPhotoURL;
@@ -173,7 +173,7 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 		<template v-if="!loading">
 			<ContainerComp class="flex-1 flex flex-col">
 				<ContainerComp class="flex-1 flex flex-col gap-4">
-					<TitleComp text="Cuenta" :stickyTop="true" />
+					<TitleComp text="Account" :stickyTop="true" />
 					<ContainerComp class="flex flex-col">
 						<CoverPhotoComp :src="userProfile?.coverPhotoURL"
 							:alt="userProfile?.name" :isOwnAccount="isOwnAccount"
@@ -185,15 +185,15 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 							<div class="flex gap-2">
 								<template v-if="isOwnAccount">
 									<RouterLink to="/account/edit" class="inline-flex items-center px-2 py-1 xs:px-4 xs:py-2 border rounded-lg text-center text-xs xs:text-base transition hover:bg-white hover:text-black">
-										Editar perfil
+										Edit profile
 									</RouterLink>
 									<button @click="handlerLogoutUser" class="inline-flex items-center px-2 py-1 xs:px-4 xs:py-2 border rounded-lg text-center text-xs xs:text-base transition hover:bg-white hover:text-black">
-										Cerrar sesión
+										Log out
 									</button>
 								</template>
 								<template v-else>
 									<RouterLink :to="{ name: 'PrivateChat', params: { id: userProfile?.uid } }" class="inline-flex items-center px-2 py-1 xs:px-4 xs:py-2 border rounded-lg text-center text-xs xs:text-base transition hover:bg-white hover:text-black">
-										Chatear
+										Chat
 									</RouterLink>
 								</template>
 							</div>
@@ -210,14 +210,14 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 									</ContainerComp>
 								</ContainerComp>
 							</ContainerComp>
-							<p class="text-gray-600">Mail: {{ userProfile?.email }}</p>
+							<p class="text-gray-600">Email: {{ userProfile?.email }}</p>
 							<ContainerComp class="flex gap-4">
-								<p class="text-gray-200">Seguidores: {{ userProfile?.followers?.length }}</p>
-								<p class="text-gray-200">Siguiendo: {{ userProfile?.following?.length }}</p>
+								<p class="text-gray-200">Followers: {{ userProfile?.followers?.length }}</p>
+								<p class="text-gray-200">Following: {{ userProfile?.following?.length }}</p>
 							</ContainerComp>
 						</ContainerComp>
 						<p class="break-words whitespace-normal">{{ userProfile?.bio }}</p>
-						<ContainerComp tag="h3" text="Publicaciones" class="sticky top-12 bg-black z-10 break-words whitespace-normal w-full border-b border-gray-200 py-1 mb-4" />
+						<ContainerComp tag="h3" text="Posts" class="sticky top-12 bg-black z-10 break-words whitespace-normal w-full border-b border-gray-200 py-1 mb-4" />
 						<PostListComp :posts="postFromUser" />
 					</ContainerComp>
 				</ContainerComp>
@@ -234,11 +234,11 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 			<ContainerComp class="max-w-96 px-2">
 				<ContainerComp tag="figure" class="max-w-96 aspect-w-16 aspect-h-9">
 					<img :src="tempCoverPhotoPreview || (userProfile?.coverPhotoURL || DEFAULT_COVER_PHOTO)"
-						:alt="userProfile?.name || 'Foto de perfil del usuario'"
+						:alt="userProfile?.name || 'User profile photo'"
 						class="object-cover">
 				</ContainerComp>
 				<ContainerComp tag="form" class="mt-2 flex flex-col gap-2">
-					<label for="photo-upload" class="block text-sm font-medium text-gray-300 text-center">Subir nueva foto</label>
+					<label for="photo-upload" class="block text-sm font-medium text-gray-300 text-center">Upload new photo</label>
 					<input @change="handleCoverPhotoUpload"
 						type="file" 
 						id="photo-upload" 
@@ -250,12 +250,12 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 							:disabled="!Boolean(tempCoverPhotoPreview) || tempCoverPhotoPreview === userProfile?.coverPhotoURL || tempCoverPhotoPreview === DEFAULT_COVER_PHOTO"
 							class="w-full py-2 rounded-lg text-sm  font-semibold border disabled:border-gray-500 disabled:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
 							:class="{ 'bg-violet-50 text-black hover:text-white hover:bg-black': !!tempCoverPhotoPreview && tempCoverPhotoPreview !== userProfile?.coverPhotoURL && tempCoverPhotoPreview !== DEFAULT_COVER_PHOTO}">
-							Guardar
+							Save
 						</button>
 						<button @click="cancelCoverPhotoUpload"
 							type="button"
 							class="w-full py-2 rounded-lg border border-white text-sm font-semibold bg-violet-50 text-black hover:bg-black hover:text-white">
-							Cancelar
+							Cancel
 						</button>
 					</ContainerComp>
 				</ContainerComp>
@@ -266,11 +266,11 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 			<ContainerComp class="max-w-96 px-2">
 				<ContainerComp tag="figure" class="aspect-w-1 aspect-h-1">
 					<img :src="tempProfilePhotoPreview || (userProfile?.photoURL || DEFAULT_PROFILE_PHOTO)"
-						:alt="userProfile?.name || 'Foto de perfil del usuario'"
+						:alt="userProfile?.name || 'User profile photo'"
 						class="w-full h-full object-cover">
 				</ContainerComp>
 				<ContainerComp tag="form" class="mt-2 flex flex-col gap-2">
-					<label for="photo-upload" class="block text-sm font-medium text-gray-300 text-center">Subir nueva foto</label>
+					<label for="photo-upload" class="block text-sm font-medium text-gray-300 text-center">Upload new photo</label>
 					<input @change="handleProfilePhotoUpload"
 						type="file" 
 						id="photo-upload" 
@@ -282,12 +282,12 @@ watch([() => route.params.id, () => user.value?.photoURL, () => user.value?.cove
 							:disabled="!Boolean(tempProfilePhotoPreview) || tempProfilePhotoPreview === userProfile?.photoURL || tempProfilePhotoPreview === DEFAULT_PROFILE_PHOTO"
 							class="w-full py-2 rounded-lg text-sm  font-semibold border disabled:border-gray-500 disabled:opacity-50 disabled:text-gray-500 disabled:cursor-not-allowed"
 							:class="{ 'bg-violet-50 text-black hover:text-white hover:bg-black': !!tempProfilePhotoPreview && tempProfilePhotoPreview !== userProfile?.photoURL && tempProfilePhotoPreview !== DEFAULT_PROFILE_PHOTO, }">
-							Guardar
+							Save
 						</button>
 						<button @click="cancelProfilePhotoUpload"
 							type="button" 
 							class="w-full py-2 rounded-lg border border-white text-sm font-semibold bg-violet-50 text-black hover:bg-black hover:text-white">
-							Cancelar
+							Cancel
 						</button>
 					</ContainerComp>
 				</ContainerComp>

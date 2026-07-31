@@ -1,5 +1,5 @@
-const CACHE_STATIC_NAME = 'static-v1';
-const CACHE_DYNAMIC_NAME = 'dynamic-v1';
+const CACHE_STATIC_NAME = 'static-v2';
+const CACHE_DYNAMIC_NAME = 'dynamic-v2';
 
 const urlsToCache = [
 	'/index.html',
@@ -18,7 +18,6 @@ self.addEventListener('install', (e) => {
 				return cache.addAll(urlsToCache);
 			})
 	)
-	// console.log('Cacheado los recursos estaticos');
 });
 
 self.addEventListener('activate', (e) => {
@@ -26,10 +25,8 @@ self.addEventListener('activate', (e) => {
 		caches.keys().then((cacheNames) => {
 			return Promise.all(cacheNames.map((cacheName) => {
 				if (cacheName !== CACHE_STATIC_NAME && cacheName !== CACHE_DYNAMIC_NAME) {
-					// console.log('Borrando cache antiguo', cacheName);
 					return caches.delete(cacheName);
 				}
-				// console.log('No se borra cache', cacheName);
 			}));
 		})
 	)

@@ -1,6 +1,7 @@
 //------------------------------------------------------------------- FIREBASE SERVICES
-import { getFileURL, uploadFile } from '@/services/storage.service';
-import { getAllPostFromFirestore, createNewPostOnFirestore, getAllPostByUserUIDFromFirestore, getPostByIdFromFirestore, updatePostOnFirestore } from '@/services/post.service';
+import { getFileURL, uploadFile, deleteFileByURL } from '@/services/storage.service';
+import { getAllPostFromFirestore, createNewPostOnFirestore, getAllPostByUserUIDFromFirestore, getPostByIdFromFirestore, updatePostOnFirestore, deletePostFromFirestore } from '@/services/post.service';
+import { deleteAllCommentsFromPost } from '@/services/comment.service';
 //------------------------------------------------------------------- VUE COMPOSITION API
 import { ref } from 'vue';
 //------------------------------------------------------------------- FUNCIÓN PRINCIPAL
@@ -94,6 +95,16 @@ const usePosts = () => {
 		return fileURL;
 	}
 
+	async function deletePost(post) {
+		try {
+			await deleteAllCommentsFromPost(post.id);
+			if (post.file) await deleteFileByURL(post.file);
+			await deletePostFromFirestore(post.id);
+		} catch (error) {
+			console.error("Error deleting post: ", error);
+		}
+	}
+
 	return {
 		postsList,
 		getAllPosts,
@@ -101,7 +112,8 @@ const usePosts = () => {
 		getAllPostsByUserUID,
 		getPostByID,
 		updatePost,
-		uploadPostFile, // todo -> revisar si es necesario retornarla
+		deletePost,
+		uploadPostFile,
 	};
 };
 

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------- FIREBASE SERVICES
-import { getCommentsFromFirestore, saveCommentToFirestore } from '@/services/comment.service';
+import { getCommentsFromFirestore, saveCommentToFirestore, deleteCommentFromFirestore } from '@/services/comment.service';
 //------------------------------------------------------------------- VUE COMPOSITION API
 import { ref } from 'vue';
 //------------------------------------------------------------------- FUNCIÓN PRINCIPAL
@@ -35,10 +35,19 @@ function useComments() {
 		}
 	}
 
+	async function deleteComment(postID, commentID) {
+		try {
+			await deleteCommentFromFirestore(postID, commentID);
+		} catch (error) {
+			console.error('Error eliminando comentario:', error);
+		}
+	}
+
 	return {
 		comments,
 		getCommentsByPostID,
 		saveComment,
+		deleteComment,
 	}
 }
 

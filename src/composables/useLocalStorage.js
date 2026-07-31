@@ -16,7 +16,9 @@ const useLocalStorage = () => {
 	 * @returns 
 	 */
 	function getDataFromLocalStorage(key) {
-		return JSON.parse(localStorage.getItem(key));
+		const raw = localStorage.getItem(key);
+		if (raw === null || raw === 'undefined') return null;
+		return JSON.parse(raw);
 	}
 
 	/**

@@ -1,9 +1,0 @@
-> Carrera: Diseño y desarrollo web.
-> Materia: Clientes web mobile.
-> Cuatrimestre: 4to (Cuarto cuatrimestre).
-> Año: 2024.
-> Turno: Tarde.
-> Comisión: DWT4AV.
-> Nombre y apellido: Carlos Marquina.
-> Docente: Santiago Gallino.
-> Entrega: 2do Parcial.

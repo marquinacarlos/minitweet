@@ -1,21 +1,20 @@
 <script setup>
 //------------------------------------------------------------------- COMPOSABLES
-import useAuth from '@/composables/useAuth';
+import useProfile from '@/composables/useProfile';
 import useModal from '@/composables/useModal';
 //------------------------------------------------------------------- COMPONENTS
 import ContainerComp from './ContainerComp.vue';
 import ExpandableText from './ExpandableText.vue';
 //------------------------------------------------------------------- HELPERS
-import { formatDistanceToNow } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { formatRelativeDate } from '@/utils/date';
+import { DEFAULT_PROFILE_PHOTO } from '@/config/constants';
 //------------------------------------------------------------------- VUE COMPOSITION API
 import { RouterLink } from 'vue-router';
 import { onMounted, ref } from 'vue';
 //------------------------------------------------------------------- USE COMPOSABLES
-const { getUserById } = useAuth();
+const { getUserById } = useProfile();
 const { openModal } = useModal();
 //------------------------------------------------------------------- VARIABLES
-const perfilPhotoDefault = '/perfilPhotoDefault.png';
 const userFromPost = ref(null);
 //------------------------------------------------------------------- METHODS
 /**
@@ -23,9 +22,6 @@ const userFromPost = ref(null);
  * @param {Object} timestamp Timestamp de Firestore
  * @returns {Date} Objeto Date
  */
-function convertTimestampToDate(timestamp) {
-	return new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
-}
 //------------------------------------------------------------------- LIFECYCLE
 onMounted(async () => {
 	try {
@@ -56,7 +52,7 @@ const props = defineProps({
 			<figure v-if="post.userUID" class="w-10 h-10">
 				<router-link :to="{ name: 'Account', params: { id: post.userUID } }">
 					<img :alt="userFromPost?.name"
-						:src="userFromPost?.photoURL || perfilPhotoDefault"
+						:src="userFromPost?.photoURL || DEFAULT_PROFILE_PHOTO"
 						class="w-10 h-10 object-cover rounded-full border-2 border-black cursor-pointer hover:border-blue-700">
 				</router-link>
 			</figure>
@@ -88,21 +84,15 @@ const props = defineProps({
 		</section>
 		<div v-if="editPost" class="my-2 flex justify-center items-center px-6">
 			<button @click="openModal"
-				type="button" 
+				type="button"
 				class="transition w-60 xs:w-full py-1 bg-white text-sm text-black rounded-lg border border-transparent hover:border-white hover:text-white hover:bg-transparent">
 				Editar
 			</button>
 		</div>
 		<ContainerComp class="flex justify-end pr-4">
 			<p v-if="post?.createdAt" class="text-xs text-gray-500 -mb-3">
-				{{ formatDistanceToNow(convertTimestampToDate(post.createdAt), { addSuffix: true, locale: es }) }}
+				{{ formatRelativeDate(post.createdAt) }}
 			</p>
 		</ContainerComp>
 	</article>
 </template>
-
-<style scoped>
-.max-with{
-	max-width: calc(100dvw - 80px);
-}
-</style>

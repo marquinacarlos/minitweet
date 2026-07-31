@@ -67,7 +67,7 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="max-with">
+	<div class="max-width-text">
 		<!-- Si `linkToPost` tiene un valor, envuelve el texto en un enlace de RouterLink. -->
 		<template v-if="linkToPost.length">
 			<RouterLink :to="{ name: 'Post', params: { id: linkToPost } }">
@@ -101,7 +101,7 @@ onMounted(() => {
 }
 
 /* Clase para limitar el ancho máximo del contenedor principal. */
-.max-with {
+.max-width-text {
 	max-width: calc(100dvw - 56px);
 }
 </style>

@@ -27,7 +27,7 @@ const { user } = useAuth();
 					</RouterLink>
 				</li>
 				<li>
-					<RouterLink disabled title="Chat en construcción" to="/chat" class=" text-gray-600 cursor-not-allowed">
+					<RouterLink to="/chat" title="Chat" class="transition duration-300 ease-in-out transform hover:scale-110 hover:underline">
 						Chat
 					</RouterLink>
 				</li>

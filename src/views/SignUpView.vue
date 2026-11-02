@@ -28,6 +28,7 @@ async function handlerSubmit() {
                 await registerUser({ ...userData.value });
                 router.push({ name: 'Feed' });
         } catch (error) {
+                console.error(error);
                 errorMessage.value = getFirebaseErrorMessage(authError.value);
         } finally {
                 endLoading();
@@ -82,6 +83,7 @@ async function handlerSubmit() {
 							id="password"
                                                         name="password"
 							placeholder="Password"
+							minlength="6"
 							required
                                                         class="custom-input pr-16">
 						<button type="button" @click="showPassword = !showPassword"

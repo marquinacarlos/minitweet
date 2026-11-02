@@ -7,6 +7,7 @@ const ERROR_MESSAGES = Object.freeze({
   'auth/invalid-credential': 'Invalid credentials.',
   'auth/too-many-requests': 'Too many attempts. Try again later.',
   'auth/configuration-not-found': 'Authentication service configuration error.',
+  'permission-denied': 'You do not have permission to do that.',
   'profile/not-found': 'User profile not found.',
 })
 

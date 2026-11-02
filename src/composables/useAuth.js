@@ -1,5 +1,5 @@
-import { authRegister, authlogin, authLogout, authState } from '@/services/auth.service';
-import { createProfileUser, getProfileUserByUID } from '@/services/profile.service';
+import { authRegister, authlogin, authLogout, authState, authDeleteCurrentUser } from '@/services/auth.service';
+import { createProfileUser, getProfileUserByUID, ProfileNotFoundError } from '@/services/profile.service';
 import useLocalStorage from './useLocalStorage';
 import { ref } from 'vue';
 
@@ -16,8 +16,14 @@ const useAuth = () => {
 		} else {
 			const currentUser = await authState();
 			if (currentUser) {
-				user.value = await getProfileUserByUID(currentUser.uid);
-				saveDataInLocalStorage('user', user.value);
+				try {
+					user.value = await getProfileUserByUID(currentUser.uid);
+					saveDataInLocalStorage('user', user.value);
+				} catch (error) {
+					if (!(error instanceof ProfileNotFoundError)) throw error;
+					await authLogout();
+					user.value = null;
+				}
 			}
 		}
 	}
@@ -38,7 +44,12 @@ const useAuth = () => {
 				following: [],
 				posts: [],
 			}
-			user.value = await createProfileUser(newUser);
+			try {
+				user.value = await createProfileUser(newUser);
+			} catch (profileError) {
+				await authDeleteCurrentUser().catch((e) => console.error('Rollback failed:', e));
+				throw profileError;
+			}
 			saveDataInLocalStorage('user', user.value);
 		} catch (error) {
 			authError.value = error.code;
@@ -50,7 +61,12 @@ const useAuth = () => {
 		authError.value = null;
 		try {
 			const userCredential = await authlogin({ email, password });
-			user.value = await getProfileUserByUID(userCredential.user.uid);
+			try {
+				user.value = await getProfileUserByUID(userCredential.user.uid);
+			} catch (profileError) {
+				if (profileError instanceof ProfileNotFoundError) await authLogout();
+				throw profileError;
+			}
 			saveDataInLocalStorage('user', user.value);
 		} catch (error) {
 			authError.value = error.code || 'profile/not-found';
